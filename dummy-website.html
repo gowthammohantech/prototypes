@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Acme Co. — Widget Test Page</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #1a1a1a;
+      line-height: 1.6;
+      background: #fafafa;
+    }
+    header {
+      background: #fff;
+      border-bottom: 1px solid #e5e5e5;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .logo { font-weight: 700; font-size: 1.25rem; }
+    nav a {
+      margin-left: 1.5rem;
+      color: #555;
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+    nav a:hover { color: #000; }
+
+    .hero {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 5rem 2rem 3rem;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+    .hero p {
+      font-size: 1.15rem;
+      color: #555;
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+    .btn {
+      display: inline-block;
+      background: #111;
+      color: #fff;
+      padding: 0.85rem 1.75rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .features {
+      max-width: 1100px;
+      margin: 3rem auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+      padding: 1.75rem;
+    }
+    .card h3 { margin-bottom: 0.5rem; font-size: 1.15rem; }
+    .card p { color: #666; font-size: 0.95rem; }
+
+    footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: #999;
+      font-size: 0.9rem;
+    }
+
+    .test-panel {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 1.5rem 2rem;
+      background: #fff8e1;
+      border: 1px solid #ffe082;
+      border-radius: 12px;
+    }
+    .test-panel h2 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+    .test-panel code {
+      background: #fff;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      border: 1px solid #eee;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Acme Co.</div>
+    <nav>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#docs">Docs</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Build faster, ship smarter.</h1>
+    <p>The all-in-one platform for teams who care about quality. Trusted by thousands of companies worldwide.</p>
+    <a href="#" class="btn">Get started</a>
+  </section>
+
+  <div class="test-panel">
+    <h2>🧪 Widget test page</h2>
+    <p>The Lixi widget script is loaded from <code>poc-ui-two.vercel.app/lixi-widget.js</code>. Look for it in the bottom-right corner.</p>
+  </div>
+
+  <section class="features" id="features">
+    <div class="card">
+      <h3>Fast setup</h3>
+      <p>Get up and running in minutes with our guided onboarding.</p>
+    </div>
+    <div class="card">
+      <h3>Powerful analytics</h3>
+      <p>Understand your users with real-time insights and dashboards.</p>
+    </div>
+    <div class="card">
+      <h3>Secure by default</h3>
+      <p>Enterprise-grade security and compliance built in from day one.</p>
+    </div>
+    <div class="card">
+      <h3>Global scale</h3>
+      <p>Deployed across 30+ regions for low-latency performance.</p>
+    </div>
+    <div class="card">
+      <h3>Great support</h3>
+      <p>24/7 support from a team that actually cares about your success.</p>
+    </div>
+    <div class="card">
+      <h3>Open ecosystem</h3>
+      <p>Integrate with the tools you already use, no lock-in.</p>
+    </div>
+  </section>
+
+  <footer>
+    © 2026 Acme Co. — This is a dummy page for widget testing.
+  </footer>
+
+  <!-- Lixi widget -->
+  <script
+    src="https://poc-ui-two.vercel.app/lixi-widget.js"
+    data-client-id="tenant_abc"
+    data-token="optional-bearer-token"
+    data-theme="auto"
+    data-position="bottom-right"
+    data-offset-x="24"
+    data-offset-y="24"
+  ></script>
+</body>
+</html>
