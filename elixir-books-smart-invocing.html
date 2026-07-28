@@ -1,0 +1,2650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Elixir Books — Web</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1c5fa8; --navy-d:#16437a; --navy-dd:#0f2e57; --navy-ddd:#0a2140;
+  --ink:#0f1b2d; --ink2:#344054; --muted:#667085; --muted2:#8a94a6;
+  --line:#e6ebf2; --line2:#eff3f8;
+  --bg:#f4f7fb; --card:#fff;
+  --green:#0a8f5f; --greenbg:#e7f5ef;
+  --amber:#a86400; --amberbg:#fdf3e3;
+  --red:#c0392b; --redbg:#fbeceb;
+  --violet:#7a3fd0; --violetbg:#f0eafb;
+  --magenta:#c0398b; --magentabg:#fbeef2;
+  --bluebg:#eef4fb;
+  --rail:248px; --lixi:396px; --top:60px;
+  --sh1:0 1px 2px rgba(16,24,40,.05);
+  --sh2:0 4px 16px -6px rgba(16,24,40,.16);
+  --sh3:0 24px 60px -18px rgba(11,25,48,.35);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:'Public Sans',system-ui,-apple-system,Segoe UI,sans-serif;
+  font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased;overflow:hidden}
+.mono{font-family:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+.num{font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;padding:0}
+input,select,textarea{font:inherit;color:inherit}
+a{color:var(--navy);text-decoration:none}
+:focus-visible{outline:2px solid var(--navy);outline-offset:2px;border-radius:6px}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#cfd8e4;border-radius:20px;border:3px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:#b3c0d1;background-clip:content-box;border:3px solid transparent}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ---------- shell ---------- */
+.shell{display:grid;grid-template-columns:var(--rail) minmax(0,1fr) 0;height:100vh;transition:grid-template-columns .22s cubic-bezier(.4,0,.2,1)}
+.shell.lixi-open{grid-template-columns:var(--rail) minmax(0,1fr) var(--lixi)}
+.shell.rail-collapsed{--rail:68px}
+
+/* ---------- rail ---------- */
+.rail{background:linear-gradient(178deg,#153a68 0%,#102c52 46%,#0b2143 100%);color:#dbe7f5;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.rail:after{content:'';position:absolute;inset:0 0 0 auto;width:1px;background:rgba(255,255,255,.07)}
+.brand{display:flex;align-items:center;gap:11px;padding:16px 18px 14px;flex:none}
+.brand-mark{width:34px;height:34px;border-radius:10px;background:#fff;display:grid;place-items:center;flex:none}
+.brand-mark i{width:15px;height:15px;border-radius:5px;background:linear-gradient(135deg,var(--navy),var(--green));display:block}
+.brand-txt{min-width:0}
+.brand-name{font-weight:800;font-size:15.5px;letter-spacing:-.015em;color:#fff;white-space:nowrap}
+.brand-sub{font-size:9px;font-weight:800;letter-spacing:.24em;color:#7fa8d6;margin-top:1px}
+.rail-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:4px 10px 10px}
+.rail-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);background-clip:content-box}
+.navgroup{margin-top:14px}
+.navlabel{font-size:9.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#5d84b3;padding:0 10px 7px}
+.navitem{display:flex;align-items:center;gap:11px;width:100%;padding:8px 10px;border-radius:9px;font-size:13.5px;font-weight:600;color:#b9cde5;transition:background .13s,color .13s;position:relative;text-align:left}
+.navitem:hover{background:rgba(255,255,255,.07);color:#fff}
+.navitem.on{background:rgba(255,255,255,.13);color:#fff;font-weight:700}
+.navitem.on:before{content:'';position:absolute;left:-10px;top:7px;bottom:7px;width:3px;border-radius:0 3px 3px 0;background:#4ea3ef}
+.navitem svg{flex:none;opacity:.9}
+.navitem .lbl{flex:1;white-space:nowrap;overflow:hidden}
+.navbadge{font-size:10px;font-weight:800;padding:1px 6px;border-radius:20px;background:#c2472f;color:#fff;line-height:1.5;font-family:'IBM Plex Mono',monospace}
+.navbadge.q{background:rgba(255,255,255,.16);color:#cfe1f5}
+.rail-foot{flex:none;padding:10px;border-top:1px solid rgba(255,255,255,.08)}
+.bizcard{display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border-radius:10px;text-align:left;transition:background .13s}
+.bizcard:hover{background:rgba(255,255,255,.07)}
+.bizav{width:30px;height:30px;border-radius:8px;background:#2f6fb5;color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px;flex:none}
+.bizname{font-size:12.5px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bizgst{font-size:10px;color:#7fa8d6;letter-spacing:.02em}
+.shell.rail-collapsed .brand-txt,.shell.rail-collapsed .navlabel,.shell.rail-collapsed .lbl,
+.shell.rail-collapsed .navbadge,.shell.rail-collapsed .bizname,.shell.rail-collapsed .bizgst{display:none}
+.shell.rail-collapsed .navitem,.shell.rail-collapsed .bizcard{justify-content:center;padding:9px 0}
+.shell.rail-collapsed .brand{justify-content:center;padding:16px 0 14px}
+
+/* ---------- topbar ---------- */
+.main{display:flex;flex-direction:column;min-width:0;min-height:0;background:var(--bg)}
+.top{height:var(--top);flex:none;display:flex;align-items:center;gap:14px;padding:0 22px;background:rgba(255,255,255,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);z-index:30}
+.iconbtn{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;color:var(--muted);transition:background .13s,color .13s}
+.iconbtn:hover{background:var(--line2);color:var(--ink2)}
+.crumb{display:flex;align-items:baseline;gap:9px;min-width:0}
+.crumb h1{margin:0;font-size:17px;font-weight:800;letter-spacing:-.02em;white-space:nowrap}
+.crumb span{font-size:12.5px;color:var(--muted);white-space:nowrap}
+.spacer{flex:1}
+.searchbtn{display:flex;align-items:center;gap:9px;height:34px;padding:0 10px 0 11px;border:1px solid var(--line);background:#fff;border-radius:9px;color:var(--muted);font-size:13px;min-width:230px;transition:border-color .13s,box-shadow .13s}
+.searchbtn:hover{border-color:#cfd9e6;box-shadow:var(--sh1)}
+.kbd{font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;color:var(--muted2);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 5px;background:#fbfcfe}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:34px;padding:0 14px;border-radius:9px;font-size:13.5px;font-weight:700;border:1px solid transparent;transition:filter .13s,background .13s,border-color .13s;white-space:nowrap}
+.btn:disabled{opacity:.5;cursor:default}
+.btn-p{background:var(--navy);color:#fff}.btn-p:hover:not(:disabled){background:#17518f}
+.btn-g{background:var(--green);color:#fff}.btn-g:hover:not(:disabled){background:#088155}
+.btn-o{background:#fff;color:var(--ink2);border-color:var(--line)}.btn-o:hover:not(:disabled){border-color:#cfd9e6;background:#fbfcfe}
+.btn-d{background:#fff;color:var(--red);border-color:#f3c9c4}.btn-d:hover:not(:disabled){background:#fef6f5}
+.btn-ghost{color:var(--navy)}.btn-ghost:hover{background:var(--bluebg)}
+.btn-sm{height:29px;padding:0 10px;font-size:12.5px;border-radius:8px}
+.avatar-btn{width:33px;height:33px;border-radius:50%;background:var(--bluebg);color:var(--navy);font-weight:800;font-size:13px;display:grid;place-items:center;border:1px solid #d6e4f5}
+.lixi-toggle{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 12px 0 10px;border-radius:9px;background:linear-gradient(135deg,#1c5fa8,#0f7a58);color:#fff;font-size:13.5px;font-weight:700}
+.lixi-toggle:hover{filter:brightness(1.08)}
+.lixi-toggle .dot{width:6px;height:6px;border-radius:50%;background:#7ef0bc;box-shadow:0 0 0 3px rgba(126,240,188,.25)}
+
+/* ---------- page ---------- */
+.page{flex:1;overflow-y:auto;padding:22px 22px 40px}
+.page-inner{max-width:1320px;margin:0 auto}
+.eyebrow{font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted2)}
+.sec{margin-top:22px}
+.sec-head{display:flex;align-items:center;gap:12px;margin-bottom:11px}
+.sec-head h2{margin:0;font-size:14.5px;font-weight:800;letter-spacing:-.01em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:13px;box-shadow:var(--sh1)}
+.card-head{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--line2)}
+.card-head h3{margin:0;font-size:13.5px;font-weight:800;letter-spacing:-.01em}
+.card-body{padding:16px}
+.grid{display:grid;gap:14px}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:13px;padding:15px 16px 14px;box-shadow:var(--sh1);position:relative;overflow:hidden}
+.kpi:before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--k,var(--navy))}
+.kpi .lab{font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--muted2)}
+.kpi .val{font-size:25px;font-weight:700;letter-spacing:-.035em;margin-top:7px;color:var(--ink)}
+.kpi .sub{font-size:12px;color:var(--muted);margin-top:4px;display:flex;align-items:center;gap:6px}
+.trend{font-size:11.5px;font-weight:800;padding:1px 6px;border-radius:5px}
+.trend.up{background:var(--greenbg);color:var(--green)}
+.trend.dn{background:var(--redbg);color:var(--red)}
+
+/* ---------- table ---------- */
+.tablewrap{overflow-x:auto}
+table.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted2);text-align:left;padding:9px 14px;border-bottom:1px solid var(--line);background:#fbfcfe;white-space:nowrap;position:sticky;top:0;z-index:2}
+.tbl th.sortable{cursor:pointer;user-select:none}
+.tbl th.sortable:hover{color:var(--ink2)}
+.tbl th .arw{opacity:.4;margin-left:4px;font-size:9px}
+.tbl th.act .arw{opacity:1;color:var(--navy)}
+.tbl td{padding:11px 14px;border-bottom:1px solid var(--line2);vertical-align:middle}
+.tbl tbody tr{transition:background .1s}
+.tbl tbody tr:hover{background:#f8fafd;cursor:pointer}
+.tbl tbody tr.sel{background:var(--bluebg)}
+.tbl tbody tr:last-child td{border-bottom:none}
+.r{text-align:right}.c{text-align:center}
+.money{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;font-weight:600;letter-spacing:-.03em;white-space:nowrap}
+.docno{font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:600;color:var(--ink2);letter-spacing:-.02em;white-space:nowrap}
+.who{display:flex;align-items:center;gap:10px;min-width:0}
+.av{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-weight:800;font-size:12.5px;flex:none}
+.who .nm{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.who .sb{font-size:11.5px;color:var(--muted2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;letter-spacing:.05em;padding:3px 7px;border-radius:6px;white-space:nowrap;text-transform:uppercase}
+.pill.soft{background:var(--line2);color:var(--muted2)}
+.strip{display:inline-flex;gap:4px;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:6px;height:29px;padding:0 11px;border-radius:8px;font-size:12.5px;font-weight:700;border:1px solid var(--line);background:#fff;color:var(--ink2);transition:all .12s}
+.chip:hover{border-color:#cfd9e6}
+.chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.chip .n{font-family:'IBM Plex Mono',monospace;font-size:11px;opacity:.75}
+.chip.on .n{opacity:.85}
+.srch{display:flex;align-items:center;gap:8px;height:34px;padding:0 11px;border:1px solid var(--line);border-radius:9px;background:#fff;min-width:250px}
+.srch input{border:none;outline:none;background:none;width:100%;font-size:13.5px}
+.srch input::placeholder{color:var(--muted2)}
+.checkbox{width:16px;height:16px;border-radius:4px;border:1.5px solid #c3ccd8;display:grid;place-items:center;background:#fff;flex:none;transition:all .12s}
+.checkbox.on{background:var(--navy);border-color:var(--navy)}
+.bulkbar{display:flex;align-items:center;gap:12px;padding:9px 14px;background:var(--bluebg);border-bottom:1px solid #d6e4f5;font-size:13px;font-weight:600;color:var(--navy-d)}
+.empty{padding:52px 20px;text-align:center}
+.empty .ttl{font-weight:800;font-size:15px;margin-bottom:5px}
+.empty .msg{color:var(--muted);font-size:13.5px;margin-bottom:16px;max-width:380px;margin-left:auto;margin-right:auto}
+/* ---------- worklist / compliance queue ---------- */
+.queue{display:flex;flex-direction:column}
+.qrow{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line2);transition:background .1s}
+.qrow:last-child{border-bottom:none}
+.qrow:hover{background:#f8fafd}
+.qico{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;flex:none}
+.qmain{flex:1;min-width:0}
+.qttl{font-weight:700;font-size:13.5px}
+.qsub{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ---------- bars ---------- */
+.barrow{display:grid;grid-template-columns:78px 1fr auto;align-items:center;gap:12px;margin-bottom:11px}
+.barrow:last-child{margin-bottom:0}
+.barlab{font-size:12px;font-weight:700;color:var(--ink2)}
+.bartrack{height:9px;border-radius:20px;background:var(--line2);overflow:hidden}
+.barfill{height:100%;border-radius:20px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.barval{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--ink2)}
+
+/* ---------- drawer ---------- */
+.scrim{position:fixed;inset:0;background:rgba(10,22,40,.42);backdrop-filter:blur(2px);z-index:60}
+.scrim.is-new{animation:fade .18s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(720px,92vw);background:#fff;z-index:61;display:flex;flex-direction:column;box-shadow:var(--sh3)}
+.drawer.is-new{animation:slidein .26s cubic-bezier(.32,.72,0,1)}
+@keyframes slidein{from{transform:translateX(28px);opacity:.4}to{transform:none;opacity:1}}
+.dr-head{flex:none;padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:14px}
+.dr-body{flex:1;overflow-y:auto;padding:20px;background:#fbfcfe}
+.dr-foot{flex:none;padding:13px 20px;border-top:1px solid var(--line);display:flex;gap:9px;flex-wrap:wrap;background:#fff}
+.dr-title{font-size:17px;font-weight:800;letter-spacing:-.02em}
+
+/* ---------- doc / invoice paper ---------- */
+.paper{background:#fff;border:1px solid var(--line);border-radius:13px;overflow:hidden;box-shadow:var(--sh1)}
+.paper-head{padding:18px 20px;border-bottom:1px solid var(--line2);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.pl{font-size:10.5px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--muted2);margin-bottom:3px}
+.pv{font-weight:600}
+.lines{width:100%;border-collapse:collapse}
+.lines th{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted2);padding:8px 20px;text-align:left;background:#fbfcfe;border-bottom:1px solid var(--line2)}
+.lines td{padding:11px 20px;border-bottom:1px solid var(--line2);font-size:13.5px}
+.lines tr:last-child td{border-bottom:none}
+.totals{padding:14px 20px;background:#fbfcfe;border-top:1px solid var(--line2)}
+.trow{display:flex;justify-content:space-between;gap:20px;padding:4px 0;font-size:13.5px;color:var(--ink2)}
+.trow.grand{border-top:1px solid var(--line);margin-top:8px;padding-top:11px;font-size:16px;font-weight:800;color:var(--ink)}
+
+/* timeline */
+.tl{position:relative;padding-left:22px}
+.tl:before{content:'';position:absolute;left:5px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tlrow{position:relative;padding-bottom:14px}
+.tlrow:last-child{padding-bottom:0}
+.tldot{position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1.5px currentColor}
+.tlttl{font-size:13px;font-weight:700}
+.tltime{font-size:11.5px;color:var(--muted2)}
+
+/* ---------- modal ---------- */
+.modal{position:fixed;z-index:70;left:50%;top:50%;transform:translate(-50%,-50%);background:#fff;border-radius:16px;box-shadow:var(--sh3);width:min(940px,94vw);max-height:88vh;display:flex;flex-direction:column;overflow:hidden}
+.modal.is-new{animation:pop .2s cubic-bezier(.32,.72,0,1)}
+.modal.sm{width:min(460px,94vw)}
+.modal.md{width:min(620px,94vw)}
+@keyframes pop{from{transform:translate(-50%,-48%) scale(.97);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+.md-head{flex:none;padding:17px 20px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:14px}
+.md-body{flex:1;overflow-y:auto;padding:20px}
+.md-foot{flex:none;padding:14px 20px;border-top:1px solid var(--line);display:flex;align-items:center;gap:10px;background:#fbfcfe}
+
+/* forms */
+.field{margin-bottom:15px}
+.field label{display:block;font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.inp{width:100%;height:38px;padding:0 12px;border:1px solid var(--line);border-radius:9px;background:#fff;outline:none;font-size:14px;transition:border-color .13s,box-shadow .13s}
+.inp:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(28,95,168,.13)}
+.inp.err{border-color:var(--red);box-shadow:0 0 0 3px rgba(192,57,43,.1)}
+textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:70px;line-height:1.5}
+.hint{font-size:11.5px;color:var(--muted2);margin-top:5px}
+.hint.err{color:var(--red);font-weight:600}
+.segs{display:flex;gap:7px;flex-wrap:wrap}
+.seg{height:32px;padding:0 13px;border-radius:8px;border:1px solid var(--line);background:#fff;font-size:13px;font-weight:600;color:var(--ink2);transition:all .12s}
+.seg:hover{border-color:#cfd9e6}
+.seg.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.seg.on.g{background:var(--green);border-color:var(--green)}
+.seg.on.m{background:var(--magenta);border-color:var(--magenta)}
+.picker{border:1px solid var(--line);border-radius:11px;max-height:250px;overflow-y:auto;background:#fff}
+.pickrow{display:flex;align-items:center;gap:11px;width:100%;padding:10px 13px;border-bottom:1px solid var(--line2);text-align:left;transition:background .1s}
+.pickrow:last-child{border-bottom:none}
+.pickrow:hover{background:#f8fafd}
+.pickrow.on{background:var(--bluebg)}
+.pickrow .nm{font-weight:600;font-size:13.5px}
+.pickrow .sb{font-size:11.5px;color:var(--muted2)}
+.radio{width:16px;height:16px;border-radius:50%;border:1.5px solid #c3ccd8;display:grid;place-items:center;flex:none}
+.radio.on{border-color:var(--navy)}
+.radio.on i{width:8px;height:8px;border-radius:50%;background:var(--navy);display:block}
+.qty{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}
+.qty button{width:27px;height:27px;display:grid;place-items:center;color:var(--ink2);font-weight:700;transition:background .1s}
+.qty button:hover{background:var(--line2)}
+.qty .v{min-width:32px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.split3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.composer{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);height:min(560px,66vh)}
+.composer .left{border-right:1px solid var(--line);overflow-y:auto;padding:16px;background:#fbfcfe}
+.composer .right{overflow-y:auto;padding:16px;display:flex;flex-direction:column}
+.catgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.catbtn{border:1px solid var(--line);border-radius:9px;padding:8px 10px;text-align:left;background:#fff;transition:all .12s}
+.catbtn:hover{border-color:var(--navy);background:var(--bluebg)}
+.catbtn .n{font-size:12.5px;font-weight:700;line-height:1.25}
+.catbtn .m{font-size:10.5px;color:var(--muted2);font-family:'IBM Plex Mono',monospace;margin-top:2px}
+
+/* toggle */
+.tog{width:38px;height:22px;border-radius:20px;position:relative;transition:background .18s;flex:none}
+.tog i{position:absolute;top:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .18s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+
+/* toast */
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 18px;border-radius:11px;font-size:13.5px;font-weight:600;z-index:90;box-shadow:var(--sh3)}
+.toast.is-new{animation:tup .22s cubic-bezier(.32,.72,0,1)}
+@keyframes tup{from{transform:translate(-50%,12px);opacity:0}to{transform:translate(-50%,0);opacity:1}}
+
+/* command palette */
+.palette{position:fixed;top:14vh;left:50%;transform:translateX(-50%);width:min(600px,92vw);background:#fff;border-radius:15px;box-shadow:var(--sh3);z-index:80;overflow:hidden}
+.palette.is-new{animation:pop .18s cubic-bezier(.32,.72,0,1)}
+.pal-in{display:flex;align-items:center;gap:11px;padding:15px 18px;border-bottom:1px solid var(--line)}
+.pal-in input{flex:1;border:none;outline:none;font-size:16px;background:none}
+.pal-list{max-height:min(420px,58vh);overflow-y:auto;padding:7px}
+.pal-sec{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted2);padding:9px 11px 5px}
+.pal-row{display:flex;align-items:center;gap:11px;width:100%;padding:9px 11px;border-radius:9px;text-align:left}
+.pal-row.on{background:var(--bluebg)}
+.pal-row .n{flex:1;font-size:13.5px;font-weight:600}
+.pal-row .s{font-size:11.5px;color:var(--muted2)}
+/* ---------- Lixi panel ---------- */
+.lixi{background:#fff;border-left:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.lx-head{flex:none;padding:13px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:11px;background:linear-gradient(120deg,#12406f,#0e6b4e)}
+.lx-orb{width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.16);display:grid;place-items:center;flex:none;border:1px solid rgba(255,255,255,.24)}
+.lx-name{font-weight:800;font-size:14px;color:#fff;letter-spacing:-.01em}
+.lx-stat{font-size:11px;color:#a9dcc4;display:flex;align-items:center;gap:5px}
+.lx-stat i{width:5px;height:5px;border-radius:50%;background:#5ee6a8;display:block}
+.lx-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:11px;background:#f7f9fc}
+.lx-foot{flex:none;border-top:1px solid var(--line);padding:11px 13px;background:#fff}
+.lx-inputrow{display:flex;align-items:flex-end;gap:8px}
+.lx-ta{flex:1;border:1px solid var(--line);border-radius:11px;padding:9px 12px;font-size:13.5px;line-height:1.45;resize:none;outline:none;max-height:110px;min-height:38px;transition:border-color .13s,box-shadow .13s}
+.lx-ta:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(28,95,168,.12)}
+.lx-send{width:38px;height:38px;border-radius:11px;background:var(--navy);color:#fff;display:grid;place-items:center;flex:none;transition:background .13s}
+.lx-send:hover{background:#17518f}
+.lx-send.mic{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.lx-send.mic.live{background:var(--red);color:#fff;border-color:var(--red);animation:pulse 1.1s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(192,57,43,.4)}50%{box-shadow:0 0 0 7px rgba(192,57,43,0)}}
+.bub{max-width:88%;font-size:13.5px;line-height:1.5}
+.bub.is-new{animation:bin .24s ease both}
+@keyframes bin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.bub.bot{align-self:flex-start;background:#fff;border:1px solid var(--line);padding:10px 13px;border-radius:14px 14px 14px 4px;box-shadow:var(--sh1)}
+.bub.user{align-self:flex-end;background:var(--navy);color:#fff;padding:10px 13px;border-radius:14px 14px 4px 14px}
+.bub.wide{max-width:100%;align-self:stretch}
+.typing{display:flex;gap:4px;align-self:flex-start;background:#fff;border:1px solid var(--line);padding:12px 14px;border-radius:14px 14px 14px 4px}
+.typing i{width:6px;height:6px;border-radius:50%;background:#b3bece;display:block;animation:tdot 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes tdot{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}
+.sugg{display:flex;flex-wrap:wrap;gap:7px;align-self:flex-start;max-width:100%}
+.sugg button{border:1px solid #cddcef;background:#fff;color:var(--navy);border-radius:20px;padding:6px 12px;font-size:12.5px;font-weight:600;text-align:left;transition:background .12s}
+.sugg button:hover{background:var(--bluebg)}
+.dcard{align-self:stretch;background:#fff;border:1px solid var(--line);border-radius:13px;overflow:hidden;box-shadow:var(--sh2)}
+.dcard.is-new{animation:bin .24s ease both}
+.dcard-h{padding:11px 13px;border-bottom:1px solid var(--line2);display:flex;align-items:center;gap:9px}
+.dline{display:flex;align-items:center;gap:9px;padding:9px 13px;border-bottom:1px solid var(--line2)}
+.dline .nm{flex:1;min-width:0}
+.dline .n1{font-size:12.5px;font-weight:700;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dline .n2{font-size:10.5px;color:var(--muted2);font-family:'IBM Plex Mono',monospace}
+.dtot{padding:11px 13px;background:#fbfcfe}
+.dtot .r1{display:flex;justify-content:space-between;font-size:12px;color:var(--ink2);padding:2px 0}
+.dtot .r1.g{font-size:15px;font-weight:800;color:var(--ink);border-top:1px solid var(--line);margin-top:7px;padding-top:9px}
+.dacts{display:flex;gap:7px;padding:11px 13px;border-top:1px solid var(--line2)}
+.okcard{align-self:stretch;background:var(--greenbg);border:1px solid #b8e3ce;border-radius:13px;padding:13px}
+.okcard.is-new{animation:bin .24s ease both}
+.qrbox{display:flex;gap:13px;align-items:center;align-self:stretch;background:#fff;border:1px solid var(--line);border-radius:13px;padding:13px;box-shadow:var(--sh1)}
+.qrbox img{width:88px;height:88px;border-radius:8px;flex:none;border:1px solid var(--line2)}
+.irn{font-family:'IBM Plex Mono',monospace;font-size:9.5px;line-height:1.4;color:var(--muted);word-break:break-all}
+
+/* ---------- sign in / onboarding ---------- */
+.auth{position:fixed;inset:0;display:grid;grid-template-columns:minmax(0,1.04fr) minmax(0,.96fr);background:var(--card)}
+.auth.is-new{animation:fade .3s ease}
+.auth-side{position:relative;overflow:hidden;padding:38px 46px;color:#fff;display:flex;flex-direction:column;
+  background:linear-gradient(168deg,#1c5fa8 0%,#16437a 54%,#0a2140 100%)}
+.auth-side:before{content:'';position:absolute;width:560px;height:560px;right:-210px;top:-190px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.10),transparent 66%)}
+.auth-side:after{content:'';position:absolute;width:420px;height:420px;left:-170px;bottom:-180px;border-radius:50%;
+  background:radial-gradient(circle,rgba(10,143,95,.22),transparent 68%)}
+.auth-brand{position:relative;display:flex;align-items:center;gap:11px}
+.auth-brand .brand-mark{width:36px;height:36px}
+.auth-brand .brand-name{color:#fff}
+.auth-hero{position:relative;margin:auto 0;max-width:452px}
+.auth-hero h2{margin:0 0 12px;font-size:33px;line-height:1.14;letter-spacing:-.025em;font-weight:800}
+.auth-hero p{margin:0 0 26px;font-size:14.5px;line-height:1.6;color:#c6dbf2}
+.auth-tape{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.17);border-radius:15px;padding:15px}
+.auth-tape .cap{font-size:9.5px;font-weight:800;letter-spacing:.19em;color:#9dc2ec;margin-bottom:11px}
+.auth-tape .said{background:#fff;color:var(--ink);border-radius:13px 13px 4px 13px;padding:9px 12px;font-size:13px;
+  font-weight:600;margin-left:auto;max-width:88%;width:fit-content}
+.auth-tape .did{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.16);border-radius:13px 13px 13px 4px;
+  padding:10px 12px;margin-top:9px;max-width:92%}
+.auth-tape .did .n{font-size:12.5px;font-weight:700}
+.auth-tape .did .m{font-size:11px;color:#9dc2ec;margin-top:3px}
+.auth-foot{position:relative;display:flex;flex-wrap:wrap;gap:7px;font-size:11px;font-weight:700;color:#9dc2ec}
+.auth-foot span{border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:5px 11px}
+.auth-form{display:flex;align-items:center;justify-content:center;padding:34px;overflow-y:auto}
+.auth-box{width:100%;max-width:374px}
+.auth-step.is-new{animation:aup .3s cubic-bezier(.32,.72,0,1) both}
+@keyframes aup{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+.auth-rail{display:flex;align-items:center;gap:6px;margin-bottom:22px}
+.auth-rail i{height:3px;border-radius:2px;background:var(--line);flex:1;transition:background .22s}
+.auth-rail i.on{background:var(--navy)}
+.auth-box h1{font-size:23px;font-weight:800;letter-spacing:-.022em;margin:0 0 6px}
+.auth-box .lede{font-size:13.5px;color:var(--muted);line-height:1.55;margin:0 0 22px}
+.auth-tel{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:9px;padding:0 12px;height:44px;
+  transition:border-color .13s,box-shadow .13s}
+.auth-tel:focus-within{border-color:var(--navy);box-shadow:0 0 0 3px rgba(28,95,168,.13)}
+.auth-tel .cc{font-weight:600;font-size:14.5px;color:var(--ink2)}
+.auth-tel .bar{width:1px;height:20px;background:var(--line)}
+.auth-tel input{flex:1;border:none;outline:none;background:none;font-size:15px;font-weight:600;letter-spacing:.05em;height:100%}
+.auth-otp{width:100%;height:58px;text-align:center;font-size:25px;font-weight:600;letter-spacing:.5em;text-indent:.5em;
+  border:1px solid var(--line);border-radius:11px;outline:none;transition:border-color .13s,box-shadow .13s}
+.auth-otp:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(28,95,168,.13)}
+.auth-btn{width:100%;height:44px;font-size:14.5px;border-radius:10px;margin-top:16px}
+.auth-or{display:flex;align-items:center;gap:10px;margin:18px 0;color:var(--muted2);font-size:10.5px;font-weight:800;letter-spacing:.12em}
+.auth-or:before,.auth-or:after{content:'';flex:1;height:1px;background:var(--line)}
+.auth-note{font-size:12.5px;color:var(--muted);text-align:center;margin-top:15px}
+.auth-note a{font-weight:700;cursor:pointer}
+.auth-err{font-size:12.5px;color:var(--red);font-weight:600;margin-top:9px}
+.auth-fetch{border:1px solid #b8e3ce;background:var(--greenbg);border-radius:11px;padding:13px;margin-top:15px}
+.auth-fetch.is-new{animation:bin .26s ease both}
+.auth-sum{border:1px solid var(--line);border-radius:11px;overflow:hidden}
+.auth-sum > div{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:10px 13px;font-size:13px;
+  border-bottom:1px solid var(--line2)}
+.auth-sum > div:last-child{border-bottom:none}
+.auth-sum .k{color:var(--muted)}
+.auth-legal{font-size:11.5px;color:var(--muted2);text-align:center;margin-top:26px;line-height:1.55}
+.auth-back{font-size:12.5px;font-weight:700;color:var(--muted);display:inline-flex;align-items:center;gap:5px;margin-bottom:14px}
+.auth-back:hover{color:var(--ink2)}
+
+/* ---------- account menu ---------- */
+.top{position:relative}
+.umenu{position:absolute;top:51px;right:16px;width:252px;background:#fff;border:1px solid var(--line);border-radius:12px;
+  box-shadow:var(--sh3);z-index:80;overflow:hidden;padding:5px 0}
+.umenu.is-new{animation:umin .15s ease both}
+@keyframes umin{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+.umenu .uhead{display:flex;gap:11px;align-items:center;padding:9px 13px 12px;border-bottom:1px solid var(--line2);margin-bottom:5px}
+.umenu .uhead .nm{font-weight:800;font-size:13.5px;line-height:1.3}
+.umenu .uhead .em{font-size:11.5px;color:var(--muted);word-break:break-all}
+.umenu button{display:flex;align-items:center;gap:10px;width:100%;padding:8px 13px;font-size:13px;font-weight:600;
+  color:var(--ink2);text-align:left}
+.umenu button:hover{background:var(--bluebg)}
+.umenu .sep{height:1px;background:var(--line2);margin:5px 0}
+.umenu button.out{color:var(--red)}
+.umenu button.out:hover{background:var(--redbg)}
+
+/* responsive */
+@media (max-width:1180px){
+  .shell.lixi-open{grid-template-columns:var(--rail) minmax(0,1fr) 0}
+  .shell.lixi-open .lixi{position:fixed;top:0;right:0;bottom:0;width:min(400px,92vw);z-index:62;box-shadow:var(--sh3)}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:900px){
+  .shell{--rail:68px}
+  .shell .brand-txt,.shell .navlabel,.shell .lbl,.shell .navbadge,.shell .bizname,.shell .bizgst{display:none}
+  .shell .navitem,.shell .bizcard{justify-content:center;padding:9px 0}
+  .shell .brand{justify-content:center;padding:16px 0 14px}
+  .composer{grid-template-columns:1fr;height:auto}
+  .composer .left{border-right:none;border-bottom:1px solid var(--line)}
+  .split,.split3{grid-template-columns:1fr}
+  .searchbtn{min-width:0}.searchbtn span.t{display:none}
+}
+@media (max-width:980px){
+  .auth{grid-template-columns:1fr}
+  .auth-side{display:none}
+}
+@media (max-width:640px){
+  .kpis{grid-template-columns:1fr}
+  .auth-form{padding:22px 18px}
+  .page{padding:16px 14px 34px}
+  .top{padding:0 13px;gap:9px}
+  .crumb span{display:none}
+  .hide-sm{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+"use strict";
+/* ============================================================
+   Elixir Books — Web
+   Desktop counterpart of the Elixir Books Lite mobile app.
+   Single-file, no build step, no backend. Demo data only.
+   ============================================================ */
+
+/* ---------- business ---------- */
+const BIZ = { name:'Sri Lakshmi Traders', gstin:'29ABCDE1234F1Z5',
+  addr:'14 Avenue Rd, Bengaluru 560002', state:'Karnataka', stateCode:29,
+  prefix:'SLT/INV/2026-27/', bank:'HDFC ••4821', type:'Goods' };
+const USER = { name:'Rajesh', role:'Owner · Admin', email:'rajesh@srilakshmi.in', phone:'+91 98450 12345' };
+
+let customers = [
+  { id:'c1', name:'Kumar Enterprises',    phone:'98450 11223', gstin:'29AABCK1234M1Z2', stateCode:29, state:'Karnataka',  type:'B2B', kw:['kumar'] },
+  { id:'c2', name:'Anand Retail',         phone:'99620 44556', gstin:'33AAECA5678N1Z8', stateCode:33, state:'Tamil Nadu', type:'B2B', kw:['anand'] },
+  { id:'c3', name:'Priya General Stores', phone:'90080 77332', gstin:'',                 stateCode:29, state:'Karnataka',  type:'B2C', kw:['priya'] },
+  { id:'c4', name:'Vijay Wholesale',      phone:'94900 65432', gstin:'36AADCV2211P1Z6', stateCode:36, state:'Telangana',  type:'B2B', kw:['vijay'] },
+  { id:'c5', name:'Meena Distributors',   phone:'99450 88771', gstin:'29AAJCM8090K1Z1', stateCode:29, state:'Karnataka',  type:'B2B', kw:['meena'] },
+];
+let items = [
+  { id:'i1', name:'Basmati Rice 25kg Bag',   hsn:'1006', gst:5,  rate:1850, unit:'BAG',  kw:['rice','basmati'] },
+  { id:'i2', name:'Sunflower Oil 5L',        hsn:'1512', gst:5,  rate:720,  unit:'CAN',  kw:['oil','sunflower'] },
+  { id:'i3', name:'Wheat Flour 10kg',        hsn:'1101', gst:5,  rate:420,  unit:'BAG',  kw:['flour','wheat','atta'] },
+  { id:'i4', name:'Detergent Powder 1kg',    hsn:'3402', gst:18, rate:145,  unit:'PKT',  kw:['detergent'] },
+  { id:'i5', name:'Toilet Soap (pack of 4)', hsn:'3401', gst:18, rate:180,  unit:'PACK', kw:['soap'] },
+  { id:'i6', name:'Notebook 200 pages',      hsn:'4820', gst:12, rate:55,   unit:'PC',   kw:['notebook','book'] },
+  { id:'i7', name:'Steel Water Bottle 1L',   hsn:'7323', gst:18, rate:320,  unit:'PC',   kw:['bottle','steel'] },
+  { id:'i8', name:'Sugar 50kg Bag',          hsn:'1701', gst:5,  rate:2400, unit:'BAG',  kw:['sugar'] },
+  { id:'i9', name:'Tea Powder 1kg',          hsn:'0902', gst:5,  rate:480,  unit:'PKT',  kw:['tea'] },
+];
+
+/* ---------- helpers ---------- */
+const cust = id => customers.find(c => c.id === id);
+const item = id => items.find(i => i.id === id);
+
+function fmt(n){
+  const neg = n < 0; n = Math.abs(Math.round(n*100)/100);
+  let [i,d] = n.toFixed(2).split('.');
+  let last3 = i.slice(-3), other = i.slice(0,-3);
+  if (other) last3 = ',' + last3;
+  other = other.replace(/\B(?=(\d{2})+(?!\d))/g, ',');
+  return (neg?'-':'') + '₹' + other + last3 + '.' + d;
+}
+const fmt0 = n => fmt(n).replace(/\.\d\d$/,'');
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+/* GST-correct totals: intra-state splits CGST+SGST, inter-state charges IGST */
+function build(customerId, lineRefs){
+  const c = cust(customerId);
+  const inter = c.stateCode !== BIZ.stateCode;
+  const lines = lineRefs.map(r => {
+    const it = item(r.itemId), taxable = it.rate * r.qty;
+    return { itemId:it.id, name:it.name, hsn:it.hsn, unit:it.unit, qty:r.qty,
+             rate:it.rate, gst:it.gst, taxable, tax: taxable*it.gst/100 };
+  });
+  return totalise({ customerId, customerName:c.name, inter, lines });
+}
+function totalise(d){
+  d.lines.forEach(l => { l.taxable = l.rate*l.qty; l.tax = l.taxable*l.gst/100; });
+  d.sub = d.lines.reduce((a,l)=>a+l.taxable, 0);
+  d.taxTotal = d.lines.reduce((a,l)=>a+l.tax, 0);
+  const raw = d.sub + d.taxTotal;
+  d.total = Math.round(raw); d.round = d.total - raw;
+  d.cgst = d.inter ? 0 : d.taxTotal/2;
+  d.sgst = d.inter ? 0 : d.taxTotal/2;
+  d.igst = d.inter ? d.taxTotal : 0;
+  return d;
+}
+function fakeIrn(seed){
+  let h = 2166136261;
+  for (let i=0;i<seed.length;i++){ h ^= seed.charCodeAt(i); h = Math.imul(h,16777619)>>>0; }
+  let s = ''; const hex = '0123456789abcdef';
+  for (let i=0;i<64;i++){ h = (Math.imul(h,1103515245)+12345)>>>0; s += hex[(h>>>(i%24))&15]; }
+  return s;
+}
+function makeQR(seed){
+  const n=25, cell=4, pad=8, size=n*cell+pad*2;
+  let h=2166136261;
+  for(let i=0;i<seed.length;i++){ h^=seed.charCodeAt(i); h=Math.imul(h,16777619)>>>0; }
+  const rnd=()=>{ h=(Math.imul(h,1103515245)+12345)>>>0; return (h>>>16)/65536; };
+  const rect=(x,y)=>'<rect x="'+(pad+x*cell)+'" y="'+(pad+y*cell)+'" width="'+cell+'" height="'+cell+'"/>';
+  let cells='';
+  const finder=(ox,oy)=>{ for(let y=0;y<7;y++) for(let x=0;x<7;x++){
+    const b=(x===0||x===6||y===0||y===6), inr=(x>=2&&x<=4&&y>=2&&y<=4);
+    if(b||inr) cells+=rect(ox+x,oy+y); } };
+  for(let y=0;y<n;y++) for(let x=0;x<n;x++){
+    if((x<7&&y<7)||(x>n-8&&y<7)||(x<7&&y>n-8)) continue;
+    if(rnd()>0.52) cells+=rect(x,y);
+  }
+  finder(0,0); finder(n-7,0); finder(0,n-7);
+  return 'data:image/svg+xml,'+encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'">'+
+    '<rect width="'+size+'" height="'+size+'" fill="#fff"/><g fill="#0f1b2d">'+cells+'</g></svg>');
+}
+const AVPAL = [['#eef4fb','#1c5fa8'],['#e7f5ef','#0a8f5f'],['#fdf3e3','#a86400'],['#f0eafb','#7a3fd0'],['#fbeef2','#c0398b']];
+function avatar(seed){ let h=0; for(let i=0;i<seed.length;i++) h=h*31+seed.charCodeAt(i); return AVPAL[Math.abs(h)%AVPAL.length]; }
+
+/* ---------- status vocabularies ---------- */
+const PAY = { unpaid:['Unpaid','#fdf3e3','#a86400'], paid:['Paid','#e7f5ef','#0a8f5f'],
+  partial:['Partial','#eef4fb','#1c5fa8'], overdue:['Overdue','#fbeceb','#c0392b'],
+  cancelled:['Cancelled','#f2f5f9','#8a94a6'] };
+const EI = { NOT_APPLICABLE:['Not required','#f2f5f9','#8a94a6'], PENDING:['Pending','#fdf3e3','#a86400'],
+  GENERATED:['Generated','#e7f5ef','#0a8f5f'], ACTION_REQUIRED:['Rejected','#fbeceb','#c0392b'],
+  CANCELLED:['Cancelled','#f2f5f9','#8a94a6'] };
+const EWB = { NOT_REQUIRED:['Not required','#f2f5f9','#8a94a6'], RECOMMENDED:['Due','#fdf3e3','#a86400'],
+  ACTIVE:['Active','#e7f5ef','#0a8f5f'], EXPIRING:['Expiring','#fdf3e3','#a86400'] };
+const QST = { sent:['Sent','#fdf3e3','#a86400'], accepted:['Accepted','#e7f5ef','#0a8f5f'],
+  expired:['Expired','#f2f5f9','#8a94a6'], draft:['Draft','#eef4fb','#1c5fa8'] };
+function pill(map, key){
+  const m = map[key]; if (!m) return '';
+  return `<span class="pill" style="background:${m[1]};color:${m[2]}">${m[0]}</span>`;
+}
+
+/* ---------- icons ---------- */
+const I = {
+  home:'<path d="M3 9.5L10 4l7 5.5V16a1.2 1.2 0 0 1-1.2 1.2H4.2A1.2 1.2 0 0 1 3 16z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
+  doc:'<rect x="4.5" y="2.8" width="11" height="14.4" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M7.5 7h5M7.5 10h5M7.5 13h3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+  quote:'<path d="M5 3.5h7.5L16 7v9.5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-12a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 3.5V7h3.5" fill="none" stroke="currentColor" stroke-width="1.7"/>',
+  cnote:'<circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M6.8 10h6.4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>',
+  users:'<circle cx="10" cy="7.4" r="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M4.5 16.4c0-3 2.5-4.6 5.5-4.6s5.5 1.6 5.5 4.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+  box:'<path d="M10 2.8l6 3.1v8.2l-6 3.1-6-3.1V5.9z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M4 5.9l6 3.1 6-3.1M10 9v8.2" fill="none" stroke="currentColor" stroke-width="1.7"/>',
+  chart:'<path d="M4 16V9M8.7 16V4.5M13.3 16v-4.6M18 16h-15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+  shield:'<path d="M10 3l5.5 2.2v4.5c0 3.4-2.3 6.2-5.5 7.3-3.2-1.1-5.5-3.9-5.5-7.3V5.2z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M7.6 10.2l1.8 1.8 3.2-3.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
+  truck:'<rect x="2.5" y="5.5" width="8.5" height="7.5" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 8.2h3l2.5 2.6v2.2H11z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="6" cy="14.6" r="1.6" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="13.6" cy="14.6" r="1.6" fill="none" stroke="currentColor" stroke-width="1.6"/>',
+  gear:'<circle cx="10" cy="10" r="2.6" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M10 2.8v2M10 15.2v2M17.2 10h-2M4.8 10h-2M15.1 4.9l-1.4 1.4M6.3 13.7l-1.4 1.4M15.1 15.1l-1.4-1.4M6.3 6.3L4.9 4.9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
+  plug:'<path d="M7 3v4M13 3v4M5 7h10v3a5 5 0 0 1-10 0z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 15v3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+  help:'<circle cx="10" cy="10" r="7.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8.1 8a1.95 1.95 0 1 1 2.7 1.8c-.6.3-.8.7-.8 1.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="13.9" r=".95" fill="currentColor"/>',
+  search:'<circle cx="9" cy="9" r="5.4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M13.2 13.2L17 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+  plus:'<path d="M10 4.5v11M4.5 10h11" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>',
+  x:'<path d="M5.5 5.5l9 9M14.5 5.5l-9 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+  chev:'<path d="M7.5 4l5 6-5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+  check:'<path d="M4.5 10.5l3.6 3.6L15.5 6.5" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>',
+  send:'<path d="M3 10l14-6-5.2 14L9.6 12z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
+  mic:'<rect x="7.6" y="2.8" width="4.8" height="9" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M4.8 9.6a5.2 5.2 0 0 0 10.4 0M10 14.8v2.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+  spark:'<path d="M10 2.6l1.7 4.5 4.5 1.7-4.5 1.7L10 15l-1.7-4.5L3.8 8.8l4.5-1.7z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M15.6 13.4l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z" fill="currentColor"/>',
+  panel:'<rect x="2.8" y="4" width="14.4" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12.4 4v12" stroke="currentColor" stroke-width="1.7"/>',
+  bell:'<path d="M6 8.6a4 4 0 0 1 8 0v3l1.3 2.2H4.7L6 11.6z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8.4 16.2a1.8 1.8 0 0 0 3.2 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+  dl:'<path d="M10 3.5v8.5M6.4 8.6L10 12.2l3.6-3.6M4 15.5h12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
+  wa:'<path d="M10 3.2A6.7 6.7 0 0 0 4.2 13.4L3.4 16.6l3.3-.8A6.7 6.7 0 1 0 10 3.2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M7.9 7.6c.2 1.9 1.9 3.6 3.8 3.9l.8-1 1.3.7-.3 1.2c-2.6.5-5.7-2.4-5.6-5.1l1.2-.4z" fill="currentColor"/>',
+  warn:'<path d="M10 3.4l7 12.2H3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 8v3.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="10" cy="13.6" r=".9" fill="currentColor"/>',
+  back:'<path d="M12.5 4l-5 6 5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+  menu:'<path d="M3.5 6h13M3.5 10h13M3.5 14h13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+  out:'<path d="M12 3.5H5.5A1.5 1.5 0 0 0 4 5v10a1.5 1.5 0 0 0 1.5 1.5H12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M13 7l3 3-3 3M16 10H8.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
+  dots:'<circle cx="5" cy="10" r="1.5" fill="currentColor"/><circle cx="10" cy="10" r="1.5" fill="currentColor"/><circle cx="15" cy="10" r="1.5" fill="currentColor"/>',
+};
+const ic = (k, sz=20) => `<svg width="${sz}" height="${sz}" viewBox="0 0 20 20" fill="none" aria-hidden="true">${I[k]||''}</svg>`;
+
+/* ---------- seed documents ---------- */
+function seedInvoice(seq, cid, defs, over){
+  const d = build(cid, defs.map(([id,q]) => ({itemId:id, qty:q})));
+  return Object.assign(d, {
+    no: BIZ.prefix + String(seq).padStart(6,'0'),
+    date:'22 Jul', due:'21 Aug', age:5,
+    payStatus:'unpaid', eiStatus:'PENDING', ewbStatus:'NOT_REQUIRED'
+  }, over || {});
+}
+let invoices = [
+  seedInvoice(42,'c2',[['i1',12],['i2',10],['i8',4]],{ date:'22 Jul', due:'21 Aug', age:5, payStatus:'paid', eiStatus:'GENERATED',
+    irn:'a4f9c7e21b8d6f0c93a2e5147b6d8f0a1c3e5d7b9f2a4c6e8d0b2f4a6c8e0d2', ackNo:'112410098765', ackDate:'22 Jul 2026' }),
+  seedInvoice(41,'c1',[['i3',8],['i9',6]],{ date:'22 Jul', due:'21 Aug', age:5, payStatus:'unpaid', eiStatus:'PENDING' }),
+  seedInvoice(40,'c4',[['i1',20],['i8',10]],{ date:'21 Jul', due:'05 Jul', age:38, payStatus:'overdue', eiStatus:'ACTION_REQUIRED',
+    eiError:'GSTIN of the recipient is inactive on the IRP.', ewbStatus:'RECOMMENDED' }),
+  seedInvoice(39,'c3',[['i4',12],['i5',8],['i6',24]],{ date:'21 Jul', due:'20 Aug', age:6, payStatus:'partial', eiStatus:'NOT_APPLICABLE' }),
+  seedInvoice(38,'c5',[['i1',30],['i2',20]],{ date:'20 Jul', due:'19 Aug', age:7, payStatus:'paid', eiStatus:'GENERATED',
+    ewbStatus:'ACTIVE', ewbNo:'1810 4455 6677', ewbValid:'24 Jul 2026',
+    irn:'b7e2d9a41c6f8e0b2d4a6c8e0f2a4c6e8d0b2f4a6c8e0d2b4f6a8c0e2d4b6', ackNo:'112410054321', ackDate:'20 Jul 2026' }),
+];
+let quotes = [
+  Object.assign(build('c1',[{itemId:'i3',qty:10},{itemId:'i9',qty:4}]),
+    { no:'SLT/QUO/2026-27/000006', date:'21 Jul', validTill:'05 Aug 2026', status:'sent', invNo:null }),
+  Object.assign(build('c4',[{itemId:'i1',qty:15},{itemId:'i8',qty:6}]),
+    { no:'SLT/QUO/2026-27/000005', date:'19 Jul', validTill:'03 Aug 2026', status:'accepted', invNo:invoices[2].no }),
+];
+let returns = [
+  Object.assign(build('c2',[{itemId:'i1',qty:2}]),
+    { no:'SLT/CN/2026-27/000001', date:'22 Jul', invNo:invoices[0].no, reason:'Damaged in transit', status:'issued' }),
+];
+let seq = { inv:43, quo:7, cn:2 };
+
+/* ---------- state ---------- */
+const S = {
+  auth:{ authed:false, step:1, phone:'', otp:'', gstin:'', fetched:false, busy:false, err:'' },
+  menu:false,
+  route:'dashboard',
+  drawer:null,          // {kind:'invoice'|'quote'|'cnote', id}
+  modal:null,           // {kind, ...}
+  lixi:true, rail:false, palette:false, palQ:'', palIdx:0,
+  chat:[], pending:null, chatInput:'', listening:false, chatBooted:false,
+  invFilter:'all', invQ:'', custQ:'', itemQ:'', selected:new Set(),
+  sort:{ key:'date', dir:'desc' },
+  form:{ customerId:null, lines:[], q:'' },
+  qForm:{ customerId:null, lines:[], q:'' },
+  ret:{ invNo:null, lines:{}, reason:'' },
+  ewb:{ transporter:'', vehicle:'', distance:'', mode:'Road' }, ewbErr:false, ewbBusy:false,
+  recover:{ gstin:'', busy:false, done:false },
+  integrations:{ 'GST Suvidha Provider':true, 'WhatsApp Business API':true, 'HDFC Bank feed':true,
+                 'Tally export':false, 'Razorpay payment links':false },
+  newCust:{ name:'', phone:'', gstin:'', stateCode:29 },
+  newItem:{ name:'', hsn:'', rate:'', gst:18, unit:'PC' },
+  toast:null, toastN:0,
+};
+
+/* ---------- derived ---------- */
+const openInvoices = () => invoices.filter(i => ['unpaid','overdue','partial'].includes(i.payStatus));
+const outstanding  = () => openInvoices().reduce((a,i)=>a+i.total, 0);
+const eiPending    = () => invoices.filter(i => i.eiStatus === 'PENDING' || i.eiStatus === 'ACTION_REQUIRED');
+const ewbDue       = () => invoices.filter(i => i.ewbStatus === 'RECOMMENDED');
+const ewbActive    = () => invoices.filter(i => i.ewbStatus === 'ACTIVE');
+const findInv      = no => invoices.find(i => i.no === no);
+
+/* ---------- render scheduling + focus preservation ---------- */
+let raf = null;
+let onScreen = new Set();   // data-anim keys visible in the previous frame
+function render(){
+  if (raf) return;
+  raf = requestAnimationFrame(() => {
+    raf = null;
+    const root = document.getElementById('root');
+    const a = document.activeElement;
+    const key = a && a.dataset ? a.dataset.k : null;
+    const ss = a && a.selectionStart, se = a && a.selectionEnd;
+
+    /* remember where every scroll container was */
+    const tops = {};
+    root.querySelectorAll('[data-scroll]').forEach(n => { tops[n.dataset.scroll] = n.scrollTop; });
+
+    root.innerHTML = view();
+
+    /* entry animations run once, for panels that were not there a frame ago,
+       instead of replaying on every keystroke */
+    const now = new Set();
+    root.querySelectorAll('[data-anim]').forEach(n => {
+      const k = n.dataset.anim;
+      now.add(k);
+      if (!onScreen.has(k)) n.classList.add('is-new');
+    });
+    onScreen = now;
+
+    root.querySelectorAll('[data-scroll]').forEach(n => {
+      const t = tops[n.dataset.scroll];
+      if (t) n.scrollTop = t;
+    });
+
+    if (key){
+      const n = root.querySelector('[data-k="'+key+'"]');
+      if (n){ n.focus(); try { n.setSelectionRange(ss, se); } catch(e){} }
+    }
+    const lb = document.getElementById('lx-body');
+    if (lb) lb.scrollTop = lb.scrollHeight;
+  });
+}
+let toastTimer = null;
+function toast(t){
+  S.toast = t; S.toastN++; render();
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { S.toast = null; render(); }, 2400);
+}
+function go(route){ S.route = route; S.selected = new Set(); S.drawer = null; render(); }
+function openDoc(kind, id){ S.drawer = { kind, id }; render(); }
+function closeDrawer(){ S.drawer = null; render(); }
+function openModal(m){ S.modal = m; render(); }
+function closeModal(){ S.modal = null; render(); }
+
+/* ---------- actions ---------- */
+function issue(draft, opts){
+  const inv = Object.assign({}, draft, {
+    no: BIZ.prefix + String(seq.inv).padStart(6,'0'),
+    date:'23 Jul', due:'22 Aug', age:0,
+    payStatus:'unpaid', eiStatus:'PENDING',
+    ewbStatus: draft.total > 50000 ? 'RECOMMENDED' : 'NOT_REQUIRED'
+  }, opts || {});
+  seq.inv++;
+  invoices = [inv].concat(invoices);
+  return inv;
+}
+function genEinvoice(no, silent){
+  const inv = findInv(no); if (!inv || inv.eiStatus === 'GENERATED') return null;
+  inv.eiStatus = 'GENERATED';
+  inv.irn = fakeIrn(no);
+  inv.ackNo = '1124' + Math.floor(100000 + Math.random()*899999);
+  inv.ackDate = '23 Jul 2026';
+  if (!silent) toast('E-invoice generated — IRN received');
+  return inv;
+}
+function bulkEinvoice(){
+  const eligible = [...S.selected].map(findInv).filter(i => i && i.eiStatus === 'PENDING');
+  if (!eligible.length){ toast('Nothing pending in the selection'); return; }
+  eligible.forEach(i => genEinvoice(i.no, true));
+  S.selected = new Set();
+  toast(eligible.length + (eligible.length === 1 ? ' e-invoice filed' : ' e-invoices filed'));
+}
+function markPaid(no){ const i = findInv(no); if(i){ i.payStatus='paid'; } closeModal(); toast('Payment recorded'); }
+function markPartial(no){ const i = findInv(no); if(i){ i.payStatus='partial'; } closeModal(); toast('Part payment recorded'); }
+function cancelInvoice(no, reason){ const i = findInv(no); if(i){ i.payStatus='cancelled'; i.cancelReason=reason; } closeModal(); toast('Invoice cancelled'); }
+function cancelEinvoice(no){ const i = findInv(no); if(i){ i.eiStatus='CANCELLED'; } closeModal(); toast('IRN cancelled with the IRP'); }
+function cancelEwb(no){ const i = findInv(no); if(i){ i.ewbStatus='NOT_REQUIRED'; i.ewbNo=null; i.ewbValid=null; } closeModal(); toast('E-way bill cancelled'); }
+function extendEwb(no){ const i = findInv(no); if(i){ i.ewbValid='27 Jul 2026'; } toast('Validity extended to 27 Jul'); }
+
+/* ---------- sign in / onboarding ---------- */
+function focusAuth(k){ setTimeout(() => { const n = document.querySelector('[data-k="'+k+'"]'); n && n.focus(); }, 40); }
+function authErr(m){ S.auth.err = m; render(); }
+function sendOtp(){
+  const a = S.auth;
+  if (a.phone.replace(/\D/g,'').length !== 10) return authErr('Enter your 10-digit mobile number');
+  a.err = ''; a.busy = true; render();
+  setTimeout(() => { a.busy = false; a.step = 2; a.otp = ''; render(); focusAuth('otp'); }, 550);
+}
+function verifyOtp(){
+  const a = S.auth;
+  if (a.otp.length < 4) return authErr('Enter the 4-digit code');
+  a.err = ''; a.busy = true; render();
+  setTimeout(() => { a.busy = false; a.step = 3; render(); focusAuth('agst'); }, 550);
+}
+function fetchGstin(){
+  const a = S.auth;
+  if (a.gstin.length !== 15) return authErr('A GSTIN is 15 characters');
+  a.err = ''; a.busy = true; render();
+  setTimeout(() => { a.busy = false; a.fetched = true; render(); }, 700);
+}
+function authAdvance(){
+  const a = S.auth;
+  if (a.busy) return;
+  if (a.step === 1) return sendOtp();
+  if (a.step === 2) return verifyOtp();
+  if (a.step === 3) return a.fetched ? (a.step = 4, a.err = '', render()) : fetchGstin();
+  if (a.step === 4) return finishAuth();
+}
+function skipAuth(){ S.auth.err = ''; finishAuth(); }
+function finishAuth(){
+  S.auth.authed = true; S.auth.busy = false;
+  S.route = 'dashboard'; render();
+  toast('Signed in as ' + USER.name);
+}
+function logout(){
+  S.auth = { authed:false, step:1, phone:'', otp:'', gstin:'', fetched:false, busy:false, err:'' };
+  S.menu = false; S.route = 'dashboard'; S.drawer = null; S.modal = null; S.palette = false;
+  S.palQ = ''; S.palIdx = 0; S.selected = new Set(); S.lixi = true;
+  S.chat = []; S.chatBooted = false; S.chatInput = ''; S.pending = null; S.listening = false;
+  S.invFilter = 'all'; S.invQ = ''; S.custQ = ''; S.itemQ = '';
+  render(); toast('Signed out');
+  focusAuth('aphone');
+}
+
+function authView(){
+  const a = S.auth;
+  return `<div class="auth" data-anim="auth">
+    <aside class="auth-side">
+      <div class="auth-brand">
+        <div class="brand-mark"><i></i></div>
+        <div><div class="brand-name" style="font-weight:800;font-size:15.5px;letter-spacing:-.015em">Elixir Books</div>
+          <div class="brand-sub" style="color:#9dc2ec">WEB</div></div>
+      </div>
+      <div class="auth-hero">
+        <h2>Bill in a sentence.<br>File with the IRP in seconds.</h2>
+        <p>Elixir Books turns plain language into a GST-correct invoice — right heads, right HSN, e-invoice and e-way bill handled.</p>
+        <div class="auth-tape">
+          <div class="cap">LIXI · IN THE APP</div>
+          <div class="said">Invoice Kumar Enterprises: 8 wheat flour, 6 tea powder</div>
+          <div class="did">
+            <div class="n">SLT/INV/2026-27/000043 · ₹6,384</div>
+            <div class="m">CGST ₹152 + SGST ₹152 · IRN received · QR on the PDF</div>
+          </div>
+        </div>
+      </div>
+      <div class="auth-foot">
+        <span>e-Invoice via GSP</span><span>e-Way bills</span><span>GSTR-1 ready</span><span>Tally export</span>
+      </div>
+    </aside>
+
+    <main class="auth-form">
+      <div class="auth-box">
+        <div class="auth-rail" aria-hidden="true">
+          ${[1,2,3,4].map(n => `<i class="${a.step >= n ? 'on' : ''}"></i>`).join('')}
+        </div>
+        ${a.step === 1 ? authPhone() : a.step === 2 ? authOtp() : a.step === 3 ? authGstin() : authReady()}
+      </div>
+    </main>
+  </div>`;
+}
+function authPhone(){
+  const a = S.auth;
+  return `<div class="auth-step" data-anim="authstep:${S.auth.step}">
+    <h1>Sign in to Elixir Books</h1>
+    <p class="lede">Use the mobile number registered with your business. We'll text you a one-time code.</p>
+    <div class="field" style="margin-bottom:0">
+      <label>Mobile number</label>
+      <div class="auth-tel">
+        <span class="cc mono">+91</span><span class="bar"></span>
+        <input class="mono" data-k="aphone" data-i="auth.phone" value="${esc(a.phone)}" inputmode="numeric"
+          placeholder="98450 12345" aria-label="Mobile number" autofocus>
+      </div>
+    </div>
+    ${a.err ? `<div class="auth-err">${esc(a.err)}</div>` : ''}
+    <button class="btn btn-p auth-btn" data-a="sendOtp" ${a.busy?'disabled':''}>${a.busy ? 'Sending code…' : 'Send code'}</button>
+    <div class="auth-or">OR</div>
+    <button class="btn btn-o" style="width:100%;height:42px;border-radius:10px" data-a="soon">Continue with Google</button>
+    <div class="auth-note">Just looking? <a data-a="skipAuth">Skip to the demo →</a></div>
+    <div class="auth-legal">By continuing you agree to the Elixir Books terms and privacy policy.</div>
+  </div>`;
+}
+function authOtp(){
+  const a = S.auth;
+  return `<div class="auth-step" data-anim="authstep:${S.auth.step}">
+    <button class="auth-back" data-a="authBack">${ic('back',15)} Change number</button>
+    <h1>Enter the code</h1>
+    <p class="lede">Sent to <span class="mono" style="color:var(--ink);font-weight:600">+91 ${esc(a.phone)}</span>. It expires in 10 minutes.</p>
+    <input class="auth-otp mono" data-k="otp" data-i="auth.otp" value="${esc(a.otp)}" inputmode="numeric" maxlength="4"
+      placeholder="••••" aria-label="One-time code">
+    <div style="text-align:center;font-size:12px;color:var(--muted2);margin-top:9px">Demo — any four digits will do</div>
+    ${a.err ? `<div class="auth-err" style="text-align:center">${esc(a.err)}</div>` : ''}
+    <button class="btn btn-p auth-btn" data-a="verifyOtp" ${a.busy?'disabled':''}>${a.busy ? 'Verifying…' : 'Verify and continue'}</button>
+    <div class="auth-note">Didn't get it? <a data-a="resendOtp">Send it again</a></div>
+  </div>`;
+}
+function authGstin(){
+  const a = S.auth;
+  return `<div class="auth-step" data-anim="authstep:${S.auth.step}">
+    <h1>Add your GSTIN</h1>
+    <p class="lede">We'll pull your registered name, address and state from the GST portal so your invoices are correct from the first one.</p>
+    <div class="field" style="margin-bottom:0">
+      <label>GSTIN</label>
+      <input class="inp mono" style="height:44px;letter-spacing:.06em" data-k="agst" data-i="auth.gstin"
+        value="${esc(a.gstin)}" maxlength="15" placeholder="29ABCDE1234F1Z5" aria-label="GSTIN">
+    </div>
+    ${a.err ? `<div class="auth-err">${esc(a.err)}</div>` : ''}
+    ${a.fetched ? `<div class="auth-fetch" data-anim="authfetch">
+      <div style="display:flex;align-items:center;gap:7px;font-size:10px;font-weight:800;letter-spacing:.11em;color:var(--green)">
+        <span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:block"></span>DETAILS RETRIEVED</div>
+      <div style="font-weight:800;font-size:15px;margin-top:8px">${esc(BIZ.name)}</div>
+      <div style="font-size:12.5px;color:var(--ink2);line-height:1.5;margin-top:3px">${esc(BIZ.addr)}<br>${BIZ.state} · Regular taxpayer</div>
+    </div>` : ''}
+    <button class="btn btn-p auth-btn" data-a="gstinNext" ${a.busy?'disabled':''}>
+      ${a.busy ? 'Fetching details…' : a.fetched ? 'Looks right, continue' : 'Fetch business details'}</button>
+    <div class="auth-note"><a data-a="skipAuth">I'm not GST registered</a></div>
+  </div>`;
+}
+function authReady(){
+  const rows = [['Invoice prefix', BIZ.prefix, 'mono'], ['Next number', String(seq.inv).padStart(6,'0'), 'mono'],
+    ['Bank account', BIZ.bank, ''], ['Place of supply', BIZ.state + ' (' + BIZ.stateCode + ')', '']];
+  return `<div class="auth-step" data-anim="authstep:${S.auth.step}">
+    <h1>You're set up</h1>
+    <p class="lede">Change any of this later in Settings. Nothing here is locked in.</p>
+    <div class="auth-sum">
+      ${rows.map(([k,v,c]) => `<div><span class="k">${k}</span><span class="${c}" style="font-weight:600">${esc(v)}</span></div>`).join('')}
+      <div><span class="k">e-Invoice / e-way bill</span>
+        <span class="pill" style="background:var(--greenbg);color:var(--green)">GSP connected</span></div>
+    </div>
+    <button class="btn btn-p auth-btn" data-a="finishAuth">Open Elixir Books</button>
+    <div class="auth-note">Press <span class="kbd">L</span> anywhere to bill by typing.</div>
+  </div>`;
+}
+function userMenu(){
+  return `<div class="umenu" data-anim="umenu" role="menu">
+    <div class="uhead">
+      <div class="av" style="width:36px;height:36px;border-radius:11px;background:var(--bluebg);color:var(--navy);font-size:14px">${USER.name[0]}</div>
+      <div style="min-width:0"><div class="nm">${esc(USER.name)}</div><div class="em">${esc(USER.email)}</div></div>
+    </div>
+    <button role="menuitem" data-a="go" data-v="settings">${ic('gear',16)} Business settings</button>
+    <button role="menuitem" data-a="go" data-v="team">${ic('users',16)} Team and roles</button>
+    <button role="menuitem" data-a="go" data-v="help">${ic('help',16)} Help and support</button>
+    <div class="sep"></div>
+    <button role="menuitem" class="out" data-a="logout">${ic('out',16)} Sign out</button>
+  </div>`;
+}
+
+/* ---------- Lixi: natural-language billing ---------- */
+function bootChat(){
+  if (S.chatBooted) return;
+  S.chatBooted = true;
+  S.chat = [{ id:1, role:'bot', kind:'text',
+    text:'Hi ' + USER.name + '. Tell me who to bill and what goes on it — for example “Invoice Kumar Enterprises: 8 wheat flour, 6 tea powder”.' }];
+}
+const nextId = () => Date.now() + Math.floor(Math.random()*1000);
+function push(msgs){ S.chat = S.chat.concat(msgs); render(); }
+function matchItem(q){
+  q = q.toLowerCase().trim();
+  return items.find(it => it.kw.some(k => q.includes(k)))
+      || items.find(it => q.includes(it.name.toLowerCase().split(' ')[0]));
+}
+function sendChat(){
+  const text = (S.chatInput || '').trim();
+  if (!text) return;
+  push([{ id:nextId(), role:'user', kind:'user', text }]);
+  S.chatInput = '';
+  const tid = nextId();
+  push([{ id:tid, role:'bot', kind:'typing' }]);
+  setTimeout(() => {
+    S.chat = S.chat.filter(m => m.id !== tid);
+    parse(text);
+  }, 620);
+}
+function parse(text){
+  const lower = text.toLowerCase();
+  const matches = customers.filter(c => c.kw.some(k => lower.includes(k)) || lower.includes(c.name.toLowerCase()));
+  let part = text.includes(':') ? text.split(':').slice(1).join(':') : text;
+  const lines = [];
+  part.split(/,|\band\b|\+/i).forEach(seg => {
+    let qty, q;
+    const m = seg.match(/(\d+)\s*(?:x|nos\.?|pcs\.?|units?|bags?|pkts?|pieces?)?\s+([a-z][a-z0-9 ]*)/i);
+    if (m){ qty = parseInt(m[1]); q = m[2]; }
+    else {
+      const m2 = seg.match(/([a-z][a-z0-9 ]*?)\s*(?:x|×)\s*(\d+)/i);
+      if (m2){ q = m2[1]; qty = parseInt(m2[2]); }
+    }
+    if (!qty || !q) return;
+    const it = matchItem(q);
+    if (it) lines.push({ itemId: it.id, qty });
+  });
+
+  const pend = Object.assign({ customerId:null, lines:[] }, S.pending || {});
+  if (matches.length === 1) pend.customerId = matches[0].id;
+  if (lines.length) pend.lines = pend.lines.concat(lines);
+
+  if (!pend.customerId && matches.length > 1){
+    S.pending = pend;
+    return push([
+      { id:nextId(), role:'bot', kind:'text', text:'More than one customer matches. Which one?' },
+      { id:nextId(), role:'bot', kind:'chips', chips: matches.map(c => ({ label:c.name, cid:c.id })) }]);
+  }
+  if (!pend.customerId){
+    S.pending = pend;
+    return push([
+      { id:nextId(), role:'bot', kind:'text', text:'Who should I bill this to?' },
+      { id:nextId(), role:'bot', kind:'chips', chips: customers.slice(0,4).map(c => ({ label:c.name, cid:c.id })) }]);
+  }
+  if (!pend.lines.length){
+    S.pending = pend;
+    return push([{ id:nextId(), role:'bot', kind:'text',
+      text:'Billing ' + cust(pend.customerId).name + '. What goes on it? e.g. “10 rice bags, 5 sunflower oil”.' }]);
+  }
+  emitDraft(pend.customerId, pend.lines);
+}
+function chooseCustomer(cid){
+  const pend = Object.assign({ customerId:null, lines:[] }, S.pending || {});
+  pend.customerId = cid;
+  if (pend.lines.length) return emitDraft(cid, pend.lines);
+  S.pending = pend;
+  push([{ id:nextId(), role:'bot', kind:'text', text:'Billing ' + cust(cid).name + '. Now the items.' }]);
+}
+function emitDraft(customerId, lineRefs){
+  const d = build(customerId, lineRefs), c = cust(customerId);
+  S.pending = null;
+  const intro = c.stateCode !== BIZ.stateCode
+    ? c.name + ' is registered in ' + c.state + ', so this is inter-state — IGST applies.'
+    : 'Here is the draft with GST worked out.';
+  push([{ id:nextId(), role:'bot', kind:'text', text:intro },
+        { id:nextId(), role:'bot', kind:'draft', draft:d }]);
+}
+function updateDraft(msgId, fn){
+  S.chat = S.chat.map(m => {
+    if (m.id !== msgId || m.kind !== 'draft') return m;
+    const d = Object.assign({}, m.draft, { lines: m.draft.lines.map(l => Object.assign({}, l)) });
+    fn(d); totalise(d);
+    return Object.assign({}, m, { draft:d });
+  });
+  render();
+}
+function draftInc(msgId, itemId, delta){
+  updateDraft(msgId, d => { d.lines = d.lines.map(l => l.itemId === itemId ? Object.assign({}, l, { qty: Math.max(1, l.qty + delta) }) : l); });
+}
+function draftRemove(msgId, itemId){
+  updateDraft(msgId, d => { if (d.lines.length > 1) d.lines = d.lines.filter(l => l.itemId !== itemId); });
+}
+function draftAdd(msgId, itemId){
+  updateDraft(msgId, d => {
+    const ex = d.lines.find(l => l.itemId === itemId);
+    if (ex) d.lines = d.lines.map(l => l.itemId === itemId ? Object.assign({}, l, { qty:l.qty+1 }) : l);
+    else { const it = item(itemId); d.lines = d.lines.concat([{ itemId:it.id, name:it.name, hsn:it.hsn, unit:it.unit, qty:1, rate:it.rate, gst:it.gst }]); }
+  });
+  closeModal();
+}
+function confirmDraft(msgId){
+  const m = S.chat.find(x => x.id === msgId);
+  if (!m || m.draft.locked) return;
+  updateDraft(msgId, d => { d.locked = true; });
+  const inv = issue(m.draft);
+  push([
+    { id:nextId(), role:'bot', kind:'issued', no:inv.no, total:fmt(inv.total), who:inv.customerName },
+    { id:nextId(), role:'bot', kind:'actions', no:inv.no }
+  ]);
+  if (S.route !== 'invoices') go('invoices');
+}
+function genEinvChat(no){
+  const tid = nextId();
+  push([{ id:tid, role:'bot', kind:'typing' }]);
+  setTimeout(() => {
+    S.chat = S.chat.filter(m => m.id !== tid);
+    const inv = genEinvoice(no, true);
+    if (!inv) return render();
+    push([
+      { id:nextId(), role:'bot', kind:'text', text:'Filed with the IRP. The IRN and signed QR are on the invoice PDF.' },
+      { id:nextId(), role:'bot', kind:'einv', no, qr:makeQR(no + inv.irn), irn:inv.irn, ackNo:inv.ackNo, ackDate:inv.ackDate }
+    ]);
+  }, 1100);
+}
+function startVoice(){
+  S.listening = true; render();
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const demo = ['Invoice for Anand Retail, 20 basmati rice and 10 sunflower oil',
+                'Bill Meena Distributors 30 rice bags and 15 detergent powder',
+                'Invoice Kumar Enterprises 12 notebooks and 6 tea powder'];
+  const fallback = () => { S._vt = setTimeout(() => finishVoice(demo[Math.floor(Math.random()*demo.length)]), 1700); };
+  if (SR){
+    try {
+      const r = new SR(); r.lang = 'en-IN'; r.interimResults = false; S._rec = r;
+      let got = false;
+      r.onresult = e => { got = true; finishVoice(e.results[0][0].transcript); };
+      r.onerror = () => { if (!got && S.listening) fallback(); };
+      r.onend   = () => { if (!got && S.listening) fallback(); };
+      r.start();
+      S._vt = setTimeout(() => { try { r.stop(); } catch(e){} }, 6000);
+      return;
+    } catch(e){}
+  }
+  fallback();
+}
+function finishVoice(t){
+  clearTimeout(S._vt);
+  S.listening = false; S.chatInput = t; render();
+  setTimeout(sendChat, 260);
+}
+function stopVoice(){ clearTimeout(S._vt); try { S._rec && S._rec.stop(); } catch(e){} S.listening = false; render(); }
+
+/* ---------- documents: quotations & credit notes ---------- */
+function createQuote(){
+  const f = S.qForm;
+  if (!f.customerId || !f.lines.length) return toast('Pick a customer and add at least one item');
+  const q = Object.assign(build(f.customerId, f.lines), {
+    no:'SLT/QUO/2026-27/' + String(seq.quo).padStart(6,'0'),
+    date:'23 Jul', validTill:'07 Aug 2026', status:'sent', invNo:null });
+  seq.quo++;
+  quotes = [q].concat(quotes);
+  S.qForm = { customerId:null, lines:[], q:'' };
+  closeModal(); go('quotations'); openDoc('quote', q.no);
+  toast('Quotation ' + q.no.split('/').pop() + ' sent');
+}
+function convertQuote(no){
+  const q = quotes.find(x => x.no === no);
+  if (!q || q.status === 'accepted') return;
+  const inv = issue(q);
+  q.status = 'accepted'; q.invNo = inv.no;
+  go('invoices'); openDoc('invoice', inv.no);
+  toast('Quotation converted to ' + inv.no.split('/').pop());
+}
+function issueCreditNote(){
+  const r = S.ret, inv = findInv(r.invNo);
+  if (!inv) return toast('Select the invoice being returned against');
+  const lines = inv.lines.map((l, idx) => ({ l, q: r.lines[idx] || 0 })).filter(x => x.q > 0)
+    .map(({l,q}) => ({ itemId:l.itemId, name:l.name, hsn:l.hsn, unit:l.unit, qty:q, rate:l.rate, gst:l.gst }));
+  if (!lines.length) return toast('Set a return quantity on at least one line');
+  const cn = totalise({ customerId:inv.customerId, customerName:inv.customerName, inter:inv.inter, lines });
+  Object.assign(cn, { no:'SLT/CN/2026-27/' + String(seq.cn).padStart(6,'0'), date:'23 Jul',
+    invNo:inv.no, reason:(r.reason || '').trim() || 'Goods returned', status:'issued' });
+  seq.cn++;
+  returns = [cn].concat(returns);
+  S.ret = { invNo:null, lines:{}, reason:'' };
+  closeModal(); go('creditnotes'); openDoc('cnote', cn.no);
+  toast('Credit note ' + cn.no.split('/').pop() + ' issued');
+}
+function saveCustomer(){
+  const a = S.newCust;
+  if (!a.name.trim()) return toast('A customer needs a name');
+  const st = { 29:'Karnataka', 33:'Tamil Nadu', 36:'Telangana', 27:'Maharashtra' }[a.stateCode];
+  customers.unshift({ id:'c'+Date.now(), name:a.name.trim(), phone:a.phone || '—',
+    gstin:(a.gstin || '').toUpperCase(), stateCode:a.stateCode, state:st,
+    type: a.gstin ? 'B2B' : 'B2C', kw:[a.name.trim().toLowerCase().split(' ')[0]] });
+  S.newCust = { name:'', phone:'', gstin:'', stateCode:29 };
+  closeModal(); go('customers'); toast('Customer added');
+}
+function saveItem(){
+  const a = S.newItem;
+  if (!a.name.trim() || !a.rate) return toast('An item needs a name and a rate');
+  items.unshift({ id:'i'+Date.now(), name:a.name.trim(), hsn:a.hsn || '0000',
+    gst:a.gst, rate:parseFloat(a.rate) || 0, unit:a.unit || 'PC',
+    kw:[a.name.trim().toLowerCase().split(' ')[0]] });
+  S.newItem = { name:'', hsn:'', rate:'', gst:18, unit:'PC' };
+  closeModal(); go('items'); toast('Item added to the catalogue');
+}
+function generateEwb(){
+  if (S.ewbBusy) return;
+  const { vehicle, distance } = S.ewb;
+  if (!vehicle || !distance){ S.ewbErr = true; return render(); }
+  S.ewbErr = false; S.ewbBusy = true; render();
+  setTimeout(() => {
+    const no = S.modal && S.modal.no;
+    const inv = findInv(no);
+    const n = [0,0,0].map(() => String(Math.floor(1000 + Math.random()*8999))).join(' ');
+    if (inv){ inv.ewbStatus = 'ACTIVE'; inv.ewbNo = n; inv.ewbValid = '25 Jul 2026'; }
+    S.ewbBusy = false; S.ewb = { transporter:'', vehicle:'', distance:'', mode:'Road' };
+    closeModal(); toast('E-way bill ' + n + ' generated');
+  }, 1200);
+}
+function retryEinvoice(){
+  const r = S.recover;
+  if (r.done) return;
+  if (r.gstin.trim().length < 15) return toast('Enter the full 15-character GSTIN');
+  S.recover.busy = true; render();
+  setTimeout(() => {
+    const no = S.modal && S.modal.no;
+    genEinvoice(no, true);
+    S.recover = { gstin:'', busy:false, done:false };
+    closeModal(); toast('E-invoice generated on retry');
+  }, 1200);
+}
+
+/* ============================================================
+   VIEWS
+   ============================================================ */
+const NAV = [
+  { grp:'Ledger', items:[
+    ['dashboard','Dashboard','home'],
+    ['invoices','Invoices','doc'],
+    ['quotations','Quotations','quote'],
+    ['creditnotes','Credit notes','cnote'],
+  ]},
+  { grp:'Masters', items:[
+    ['customers','Customers','users'],
+    ['items','Items','box'],
+  ]},
+  { grp:'Compliance', items:[
+    ['einvoices','E-invoices','shield'],
+    ['ewaybills','E-way bills','truck'],
+    ['reports','Reports','chart'],
+  ]},
+  { grp:'Workspace', items:[
+    ['settings','Business','gear'],
+    ['team','Users & roles','users'],
+    ['integrations','Integrations','plug'],
+    ['help','Help','help'],
+  ]},
+];
+const TITLES = {
+  dashboard:['Dashboard', BIZ.name + ' · FY 2026-27'],
+  invoices:['Invoices','Tax invoices issued this year'],
+  quotations:['Quotations','Sent, accepted and expired'],
+  creditnotes:['Credit notes','Sale returns against issued invoices'],
+  customers:['Customers','Billing parties and their GSTINs'],
+  items:['Items','Catalogue with HSN and GST rates'],
+  einvoices:['E-invoices','IRN status for every B2B invoice'],
+  ewaybills:['E-way bills','Consignments in movement'],
+  reports:['Reports','Registers and GST summaries'],
+  settings:['Business','Legal details used on every document'],
+  team:['Users & roles','Who can do what'],
+  integrations:['Integrations','Connected services'],
+  help:['Help','Answers and ways to reach us'],
+};
+function badgeFor(route){
+  if (route === 'invoices'){ const n = openInvoices().length; return n ? ['q', n] : null; }
+  if (route === 'einvoices'){ const n = eiPending().length; return n ? ['', n] : null; }
+  if (route === 'ewaybills'){ const n = ewbDue().length; return n ? ['', n] : null; }
+  return null;
+}
+
+function view(){
+  if (!S.auth.authed)
+    return authView() + (S.toast ? `<div class="toast" role="status" data-anim="toast:${S.toastN}">${esc(S.toast)}</div>` : '');
+  return `<div class="shell ${S.lixi?'lixi-open':''} ${S.rail?'rail-collapsed':''}">
+    ${rail()}
+    <div class="main">${topBar()}<div class="page" id="page" data-scroll="page:${S.route}"><div class="page-inner">${routeView()}</div></div></div>
+    ${S.lixi ? lixiPanel() : ''}
+  </div>
+  ${S.drawer ? `<div class="scrim" data-anim="scrim" data-a="closeDrawer"></div>${drawer()}` : ''}
+  ${S.modal ? `<div class="scrim" data-anim="scrim" data-a="closeModal"></div>${modal()}` : ''}
+  ${S.palette ? `<div class="scrim" data-anim="scrim" data-a="closePalette"></div>${palette()}` : ''}
+  ${S.toast ? `<div class="toast" role="status" data-anim="toast:${S.toastN}">${esc(S.toast)}</div>` : ''}`;
+}
+
+function rail(){
+  return `<nav class="rail" aria-label="Main">
+    <div class="brand">
+      <div class="brand-mark"><i></i></div>
+      <div class="brand-txt"><div class="brand-name">Elixir Books</div><div class="brand-sub">WEB</div></div>
+    </div>
+    <div class="rail-scroll" data-scroll="rail">
+      ${NAV.map(g => `<div class="navgroup"><div class="navlabel">${g.grp}</div>
+        ${g.items.map(([r,l,i]) => {
+          const b = badgeFor(r);
+          return `<button class="navitem ${S.route===r?'on':''}" data-a="go" data-v="${r}" ${S.route===r?'aria-current="page"':''}>
+            ${ic(i,19)}<span class="lbl">${l}</span>
+            ${b ? `<span class="navbadge ${b[0]}">${b[1]}</span>` : ''}</button>`;
+        }).join('')}</div>`).join('')}
+    </div>
+    <div class="rail-foot">
+      <button class="bizcard" data-a="go" data-v="settings" title="${esc(BIZ.name)}">
+        <span class="bizav">${BIZ.name[0]}</span>
+        <span style="min-width:0"><span class="bizname">${esc(BIZ.name)}</span>
+        <span class="bizgst mono" style="display:block">${BIZ.gstin}</span></span>
+      </button>
+    </div>
+  </nav>`;
+}
+
+function topBar(){
+  const [t, sub] = TITLES[S.route] || ['',''];
+  return `<header class="top">
+    <button class="iconbtn hide-sm" data-a="toggleRail" title="Collapse sidebar" aria-label="Collapse sidebar">${ic('menu',19)}</button>
+    <div class="crumb"><h1>${t}</h1><span>${esc(sub)}</span></div>
+    <div class="spacer"></div>
+    <button class="searchbtn hide-sm" data-a="openPalette">
+      ${ic('search',16)}<span class="t" style="flex:1;text-align:left">Search or jump to…</span><span class="kbd">⌘K</span></button>
+    <button class="btn btn-p" data-a="newInvoice">${ic('plus',16)}<span class="hide-sm">New invoice</span></button>
+    <button class="lixi-toggle" data-a="toggleLixi" aria-pressed="${S.lixi}">
+      <span class="dot"></span><span class="hide-sm">Lixi</span></button>
+    <button class="avatar-btn" data-a="toggleMenu" title="${esc(USER.name)}"
+      aria-haspopup="menu" aria-expanded="${S.menu}">${USER.name[0]}</button>
+    ${S.menu ? userMenu() : ''}
+  </header>`;
+}
+
+function routeView(){
+  switch (S.route){
+    case 'dashboard':    return dashboard();
+    case 'invoices':     return invoicesPage();
+    case 'quotations':   return quotationsPage();
+    case 'creditnotes':  return creditNotesPage();
+    case 'customers':    return customersPage();
+    case 'items':        return itemsPage();
+    case 'einvoices':    return einvoicesPage();
+    case 'ewaybills':    return ewaybillsPage();
+    case 'reports':      return reportsPage();
+    case 'settings':     return settingsPage();
+    case 'team':         return teamPage();
+    case 'integrations': return integrationsPage();
+    case 'help':         return helpPage();
+    default:             return '';
+  }
+}
+
+/* ---------- dashboard ---------- */
+function dashboard(){
+  const sales = invoices.filter(i=>i.payStatus!=='cancelled').reduce((a,i)=>a+i.total,0) + 371400;
+  const out = outstanding();
+  const overdue = invoices.filter(i => i.payStatus === 'overdue');
+  const pend = eiPending();
+  const hr = new Date().getHours();
+  const greet = hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : 'Good evening';
+
+  const kpi = (k, lab, val, sub) =>
+    `<div class="kpi" style="--k:${k}"><div class="lab">${lab}</div>
+      <div class="val num">${val}</div><div class="sub">${sub}</div></div>`;
+
+  /* receivables ageing */
+  const buckets = [['Current',0,0],['1–30 days',0,0],['31–60 days',0,0],['60+ days',0,0]];
+  openInvoices().forEach(i => {
+    const a = i.age || 0;
+    const b = a <= 0 ? 0 : a <= 30 ? 1 : a <= 60 ? 2 : 3;
+    buckets[b][1] += i.total; buckets[b][2]++;
+  });
+  const maxA = Math.max(1, ...buckets.map(b => b[1]));
+  const ACOL = ['#1c5fa8','#0a8f5f','#a86400','#c0392b'];
+
+  /* GST collected by slab */
+  const slabs = { 5:0, 12:0, 18:0 };
+  invoices.filter(i=>i.payStatus!=='cancelled').forEach(i => i.lines.forEach(l => { if (slabs[l.gst] != null) slabs[l.gst] += l.tax; }));
+  const maxS = Math.max(1, ...Object.values(slabs));
+  const SCOL = { 5:'#1c5fa8', 12:'#7a3fd0', 18:'#0a8f5f' };
+
+  /* work queue */
+  const queue = [];
+  pend.forEach(i => queue.push(i.eiStatus === 'ACTION_REQUIRED'
+    ? { ic:'warn', bg:'#fbeceb', fg:'#c0392b', t:'E-invoice rejected — ' + i.no.split('/').pop(),
+        s: i.eiError || 'The IRP would not accept this invoice.', btn:'Fix and retry', a:'openRecover', v:i.no }
+    : { ic:'shield', bg:'#fdf3e3', fg:'#a86400', t:'E-invoice pending — ' + i.no.split('/').pop(),
+        s: i.customerName + ' · ' + fmt(i.total), btn:'Generate', a:'genEinv', v:i.no }));
+  ewbDue().forEach(i => queue.push({ ic:'truck', bg:'#fdf3e3', fg:'#a86400',
+    t:'E-way bill due — ' + i.no.split('/').pop(),
+    s:'Consignment above ₹50,000 · ' + i.customerName, btn:'Generate', a:'openEwb', v:i.no }));
+  overdue.forEach(i => queue.push({ ic:'bell', bg:'#fbeceb', fg:'#c0392b',
+    t:'Overdue ' + (i.age||0) + ' days — ' + i.no.split('/').pop(),
+    s: i.customerName + ' · ' + fmt(i.total), btn:'Send reminder', a:'remind', v:i.no }));
+
+  return `
+  <div style="display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:18px">
+    <div><div class="eyebrow">${greet}, ${USER.name}</div>
+    <div style="font-size:21px;font-weight:800;letter-spacing:-.025em;margin-top:3px">
+      ${queue.length ? queue.length + ' thing' + (queue.length>1?'s':'') + ' need you today' : 'Everything is filed and clear'}</div></div>
+    <div class="spacer"></div>
+    <button class="btn btn-o" data-a="newQuote">${ic('quote',15)} New quotation</button>
+    <button class="btn btn-o" data-a="newReturn">${ic('cnote',15)} Record a return</button>
+  </div>
+
+  <div class="kpis">
+    ${kpi('#1c5fa8','Sales this year', fmt0(sales), `<span class="trend up">+12.4%</span> on last year`)}
+    ${kpi('#a86400','Outstanding', fmt0(out), `${openInvoices().length} invoices unsettled`)}
+    ${kpi('#c0392b','Overdue', fmt0(overdue.reduce((a,i)=>a+i.total,0)), `${overdue.length} past the due date`)}
+    ${kpi('#0a8f5f','GST collected', fmt0(Object.values(slabs).reduce((a,b)=>a+b,0)), 'Output tax, this year')}
+  </div>
+
+  <div class="sec grid" style="grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);align-items:start">
+    <div class="card">
+      <div class="card-head"><h3>What needs doing</h3>
+        <span class="pill soft">${queue.length} open</span><div class="spacer"></div>
+        <button class="btn btn-sm btn-ghost" data-a="go" data-v="einvoices">Compliance ${ic('chev',13)}</button></div>
+      ${queue.length ? `<div class="queue">${queue.map(q => `
+        <div class="qrow">
+          <div class="qico" style="background:${q.bg};color:${q.fg}">${ic(q.ic,17)}</div>
+          <div class="qmain"><div class="qttl">${esc(q.t)}</div><div class="qsub">${esc(q.s)}</div></div>
+          <button class="btn btn-sm btn-o" data-a="${q.a}" data-v="${q.v}">${q.btn}</button>
+        </div>`).join('')}</div>`
+      : `<div class="empty"><div class="ttl">Nothing pending</div>
+          <div class="msg">Every invoice has an IRN, no consignment is waiting on an e-way bill, and nothing is past due.</div></div>`}
+    </div>
+
+    <div style="display:grid;gap:14px">
+      <div class="card">
+        <div class="card-head"><h3>Receivables ageing</h3><div class="spacer"></div>
+          <span class="pill soft">${fmt0(out)} total</span></div>
+        <div class="card-body">
+          ${buckets.map((b,i) => `<div class="barrow">
+            <div class="barlab">${b[0]}</div>
+            <div class="bartrack"><div class="barfill" style="width:${Math.max(b[1]?5:0, Math.round(b[1]/maxA*100))}%;background:${ACOL[i]}"></div></div>
+            <div class="barval">${b[1] ? fmt0(b[1]) : '—'}</div></div>`).join('')}
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>GST by slab</h3><div class="spacer"></div>
+          <button class="btn btn-sm btn-ghost" data-a="go" data-v="reports">Registers ${ic('chev',13)}</button></div>
+        <div class="card-body">
+          ${[5,12,18].map(r => `<div class="barrow">
+            <div class="barlab">GST ${r}%</div>
+            <div class="bartrack"><div class="barfill" style="width:${Math.max(slabs[r]?5:0, Math.round(slabs[r]/maxS*100))}%;background:${SCOL[r]}"></div></div>
+            <div class="barval">${slabs[r] ? fmt0(slabs[r]) : '—'}</div></div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec card">
+    <div class="card-head"><h3>Recent invoices</h3><div class="spacer"></div>
+      <button class="btn btn-sm btn-ghost" data-a="go" data-v="invoices">All invoices ${ic('chev',13)}</button></div>
+    <div class="tablewrap">${invoiceTable(invoices.slice(0,5), { compact:true })}</div>
+  </div>`;
+}
+
+/* ---------- invoice table (shared) ---------- */
+function invoiceTable(list, o){
+  o = o || {};
+  if (!list.length) return `<div class="empty"><div class="ttl">No invoices here</div>
+    <div class="msg">Nothing matches this filter yet. Clear it, or start a new invoice — Lixi can take it by dictation.</div>
+    <button class="btn btn-p" data-a="newInvoice" style="margin:0 auto">${ic('plus',15)} New invoice</button></div>`;
+  const sel = S.selected;
+  const th = (key, label, cls) => {
+    if (o.compact) return `<th class="${cls||''}">${label}</th>`;
+    const on = S.sort.key === key;
+    return `<th class="sortable ${cls||''} ${on?'act':''}" data-a="sort" data-v="${key}">${label}<span class="arw">${on ? (S.sort.dir==='asc'?'▲':'▼') : '▾'}</span></th>`;
+  };
+  return `<table class="tbl">
+    <thead><tr>
+      ${o.compact ? '' : `<th style="width:34px"><span class="checkbox ${sel.size&&sel.size===list.length?'on':''}" data-a="selAll">${sel.size&&sel.size===list.length?ic('check',11):''}</span></th>`}
+      ${th('no','Invoice')}${th('customer','Customer')}${th('date','Date')}
+      <th class="hide-sm">Place of supply</th>${th('total','Amount','r')}
+      <th>Payment</th><th class="hide-sm">E-invoice</th><th class="hide-sm">E-way bill</th>
+    </tr></thead>
+    <tbody>${list.map(i => {
+      const av = avatar(i.customerName), c = cust(i.customerId);
+      return `<tr data-a="openInv" data-v="${i.no}" class="${sel.has(i.no)?'sel':''}">
+        ${o.compact ? '' : `<td onclick="event.stopPropagation()"><span class="checkbox ${sel.has(i.no)?'on':''}" data-a="selOne" data-v="${i.no}">${sel.has(i.no)?ic('check',11):''}</span></td>`}
+        <td><span class="docno">${i.no.split('/').pop()}</span></td>
+        <td><div class="who"><span class="av" style="background:${av[0]};color:${av[1]}">${i.customerName[0]}</span>
+          <span style="min-width:0"><span class="nm">${esc(i.customerName)}</span>
+          <span class="sb mono">${c && c.gstin ? c.gstin : 'B2C'}</span></span></div></td>
+        <td style="white-space:nowrap;color:var(--ink2)">${i.date}</td>
+        <td class="hide-sm"><span class="pill" style="background:${i.inter?'#f0eafb':'#eef4fb'};color:${i.inter?'#7a3fd0':'#1c5fa8'}">${i.inter?'IGST':'CGST+SGST'}</span>
+          <div style="font-size:11.5px;color:var(--muted2);margin-top:3px">${c?esc(c.state):''}</div></td>
+        <td class="r"><span class="money">${fmt(i.total)}</span></td>
+        <td>${pill(PAY, i.payStatus)}</td>
+        <td class="hide-sm">${pill(EI, i.eiStatus)}</td>
+        <td class="hide-sm">${pill(EWB, i.ewbStatus)}</td>
+      </tr>`; }).join('')}</tbody></table>`;
+}
+function sortInvoices(list){
+  const { key, dir } = S.sort, m = dir === 'asc' ? 1 : -1;
+  const v = i => key === 'total' ? i.total
+    : key === 'customer' ? i.customerName.toLowerCase()
+    : key === 'date' ? -(i.age || 0)
+    : i.no;
+  return [...list].sort((a,b) => { const x = v(a), y = v(b); return x < y ? -m : x > y ? m : 0; });
+}
+
+/* ---------- invoices ---------- */
+function invoicesPage(){
+  const q = S.invQ.toLowerCase();
+  const F = { all:()=>true,
+    unpaid:i => i.payStatus === 'unpaid' || i.payStatus === 'partial',
+    overdue:i => i.payStatus === 'overdue',
+    einv:i => i.eiStatus === 'PENDING' || i.eiStatus === 'ACTION_REQUIRED',
+    ewb:i => i.ewbStatus === 'RECOMMENDED' };
+  const counts = { all:invoices.length, unpaid:invoices.filter(F.unpaid).length,
+    overdue:invoices.filter(F.overdue).length, einv:eiPending().length, ewb:ewbDue().length };
+  let list = invoices.filter(F[S.invFilter] || F.all);
+  if (q) list = list.filter(i => i.customerName.toLowerCase().includes(q) || i.no.toLowerCase().includes(q));
+  list = sortInvoices(list);
+  const shown = list.reduce((a,i)=>a+i.total,0);
+  const chips = [['all','All'],['unpaid','Unpaid'],['overdue','Overdue'],['einv','E-invoice due'],['ewb','E-way bill due']];
+
+  return `
+  <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:14px">
+    <div class="srch">${ic('search',16)}<input data-k="invq" data-i="invQ" value="${esc(S.invQ)}" placeholder="Search by customer or number" aria-label="Search invoices"></div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap">
+      ${chips.map(([k,l]) => `<button class="chip ${S.invFilter===k?'on':''}" data-a="invFilter" data-v="${k}">${l}<span class="n">${counts[k]}</span></button>`).join('')}
+    </div>
+    <div class="spacer"></div>
+    <button class="btn btn-o btn-sm" data-a="export">${ic('dl',15)} Export</button>
+    <button class="btn btn-p btn-sm" data-a="newInvoice">${ic('plus',15)} New invoice</button>
+  </div>
+  <div class="card">
+    ${S.selected.size ? `<div class="bulkbar">
+      <span class="checkbox on">${ic('check',11)}</span>
+      <span>${S.selected.size} selected · ${fmt(([...S.selected].map(findInv).filter(Boolean)).reduce((a,i)=>a+i.total,0))}</span>
+      <div class="spacer"></div>
+      <button class="btn btn-sm btn-p" data-a="bulkEinv">Generate e-invoices</button>
+      <button class="btn btn-sm btn-o" data-a="export">Export selection</button>
+      <button class="btn btn-sm btn-ghost" data-a="selNone">Clear</button></div>` : ''}
+    <div class="tablewrap">${invoiceTable(list)}</div>
+    ${list.length ? `<div style="display:flex;align-items:center;padding:11px 15px;border-top:1px solid var(--line2);font-size:12.5px;color:var(--muted)">
+      Showing ${list.length} of ${invoices.length} invoices<div class="spacer"></div>
+      <span style="font-weight:700;color:var(--ink2)">Total <span class="money">${fmt(shown)}</span></span></div>` : ''}
+  </div>`;
+}
+
+/* ---------- quotations ---------- */
+function quotationsPage(){
+  return `
+  <div style="display:flex;align-items:center;gap:9px;margin-bottom:14px">
+    <div class="eyebrow">${quotes.length} quotation${quotes.length===1?'':'s'} · ${quotes.filter(q=>q.status==='sent').length} awaiting a reply</div>
+    <div class="spacer"></div>
+    <button class="btn btn-g btn-sm" data-a="newQuote">${ic('plus',15)} New quotation</button>
+  </div>
+  <div class="card"><div class="tablewrap">
+  ${quotes.length ? `<table class="tbl">
+    <thead><tr><th>Quotation</th><th>Customer</th><th>Date</th><th>Valid till</th><th class="r">Amount</th><th>Status</th><th class="hide-sm">Invoice</th></tr></thead>
+    <tbody>${quotes.map(q => { const av = avatar(q.customerName);
+      return `<tr data-a="openQuote" data-v="${q.no}">
+        <td><span class="docno">${q.no.split('/').pop()}</span></td>
+        <td><div class="who"><span class="av" style="background:${av[0]};color:${av[1]}">${q.customerName[0]}</span>
+          <span class="nm">${esc(q.customerName)}</span></div></td>
+        <td style="color:var(--ink2)">${q.date}</td>
+        <td style="color:var(--ink2)">${q.validTill}</td>
+        <td class="r"><span class="money">${fmt(q.total)}</span></td>
+        <td>${pill(QST, q.status)}</td>
+        <td class="hide-sm">${q.invNo ? `<span class="docno">${q.invNo.split('/').pop()}</span>` : '<span style="color:var(--muted2)">—</span>'}</td>
+      </tr>`; }).join('')}</tbody></table>`
+  : `<div class="empty"><div class="ttl">No quotations yet</div>
+      <div class="msg">Quote a price before you commit to an invoice. Accepted quotations convert to a tax invoice in one click, with the same lines and GST.</div>
+      <button class="btn btn-g" data-a="newQuote" style="margin:0 auto">${ic('plus',15)} New quotation</button></div>`}
+  </div></div>`;
+}
+
+/* ---------- credit notes ---------- */
+function creditNotesPage(){
+  return `
+  <div style="display:flex;align-items:center;gap:9px;margin-bottom:14px">
+    <div class="eyebrow">${returns.length} credit note${returns.length===1?'':'s'} · ${fmt0(returns.reduce((a,r)=>a+r.total,0))} credited</div>
+    <div class="spacer"></div>
+    <button class="btn btn-sm" style="background:var(--magenta);color:#fff" data-a="newReturn">${ic('plus',15)} Record a return</button>
+  </div>
+  <div class="card"><div class="tablewrap">
+  ${returns.length ? `<table class="tbl">
+    <thead><tr><th>Credit note</th><th>Customer</th><th>Against invoice</th><th>Date</th><th>Reason</th><th class="r">Amount</th></tr></thead>
+    <tbody>${returns.map(r => { const av = avatar(r.customerName);
+      return `<tr data-a="openCnote" data-v="${r.no}">
+        <td><span class="docno">${r.no.split('/').pop()}</span></td>
+        <td><div class="who"><span class="av" style="background:${av[0]};color:${av[1]}">${r.customerName[0]}</span>
+          <span class="nm">${esc(r.customerName)}</span></div></td>
+        <td><span class="docno">${r.invNo.split('/').pop()}</span></td>
+        <td style="color:var(--ink2)">${r.date}</td>
+        <td style="color:var(--ink2)">${esc(r.reason)}</td>
+        <td class="r"><span class="money" style="color:var(--magenta)">−${fmt(r.total).slice(1)}</span></td>
+      </tr>`; }).join('')}</tbody></table>`
+  : `<div class="empty"><div class="ttl">No returns recorded</div>
+      <div class="msg">An issued invoice is locked for GST. When goods come back, raise a credit note against it and the tax reverses cleanly.</div>
+      <button class="btn btn-o" data-a="newReturn" style="margin:0 auto">Record a return</button></div>`}
+  </div></div>`;
+}
+
+/* ---------- customers ---------- */
+function customersPage(){
+  const q = S.custQ.toLowerCase();
+  const list = customers.filter(c => !q || c.name.toLowerCase().includes(q) || c.phone.includes(q) || c.gstin.toLowerCase().includes(q));
+  const stats = c => {
+    const inv = invoices.filter(i => i.customerId === c.id && i.payStatus !== 'cancelled');
+    return { n:inv.length, billed:inv.reduce((a,i)=>a+i.total,0),
+      due:inv.filter(i=>['unpaid','overdue','partial'].includes(i.payStatus)).reduce((a,i)=>a+i.total,0) };
+  };
+  return `
+  <div style="display:flex;align-items:center;gap:9px;margin-bottom:14px">
+    <div class="srch">${ic('search',16)}<input data-k="cq" data-i="custQ" value="${esc(S.custQ)}" placeholder="Search name, phone or GSTIN" aria-label="Search customers"></div>
+    <div class="spacer"></div>
+    <button class="btn btn-p btn-sm" data-a="addCustomer">${ic('plus',15)} Add customer</button>
+  </div>
+  <div class="card"><div class="tablewrap">
+  ${list.length ? `<table class="tbl">
+    <thead><tr><th>Customer</th><th class="hide-sm">GSTIN</th><th>State</th><th>Type</th>
+      <th class="r hide-sm">Invoices</th><th class="r">Billed</th><th class="r">Outstanding</th><th style="width:44px"></th></tr></thead>
+    <tbody>${list.map(c => { const av = avatar(c.name), st = stats(c);
+      return `<tr data-a="custActions" data-v="${c.id}">
+        <td><div class="who"><span class="av" style="background:${av[0]};color:${av[1]}">${c.name[0]}</span>
+          <span style="min-width:0"><span class="nm">${esc(c.name)}</span><span class="sb">${esc(c.phone)}</span></span></div></td>
+        <td class="hide-sm"><span class="mono" style="font-size:12px;color:var(--ink2)">${c.gstin || '—'}</span></td>
+        <td style="color:var(--ink2)">${esc(c.state)}${c.stateCode!==BIZ.stateCode?' <span class="pill" style="background:#f0eafb;color:#7a3fd0;margin-left:4px">Inter</span>':''}</td>
+        <td><span class="pill" style="background:${c.type==='B2B'?'#eef4fb':'#f0eafb'};color:${c.type==='B2B'?'#1c5fa8':'#7a3fd0'}">${c.type}</span></td>
+        <td class="r hide-sm num" style="color:var(--ink2)">${st.n}</td>
+        <td class="r"><span class="money">${fmt0(st.billed)}</span></td>
+        <td class="r"><span class="money" style="color:${st.due?'var(--amber)':'var(--muted2)'}">${st.due?fmt0(st.due):'—'}</span></td>
+        <td class="c" style="color:var(--muted2)">${ic('dots',16)}</td>
+      </tr>`; }).join('')}</tbody></table>`
+  : `<div class="empty"><div class="ttl">No customer matches “${esc(S.custQ)}”</div>
+      <div class="msg">Try a different name, or add them now — a GSTIN makes them B2B and turns on e-invoicing.</div>
+      <button class="btn btn-p" data-a="addCustomer" style="margin:0 auto">${ic('plus',15)} Add customer</button></div>`}
+  </div></div>`;
+}
+
+/* ---------- items ---------- */
+function itemsPage(){
+  const q = S.itemQ.toLowerCase();
+  const list = items.filter(it => !q || it.name.toLowerCase().includes(q) || it.hsn.includes(q));
+  const sold = it => invoices.filter(i=>i.payStatus!=='cancelled').reduce((a,i) =>
+    a + i.lines.filter(l => l.itemId === it.id).reduce((b,l)=>b+l.qty,0), 0);
+  return `
+  <div style="display:flex;align-items:center;gap:9px;margin-bottom:14px">
+    <div class="srch">${ic('search',16)}<input data-k="iq" data-i="itemQ" value="${esc(S.itemQ)}" placeholder="Search name or HSN" aria-label="Search items"></div>
+    <div class="spacer"></div>
+    <button class="btn btn-p btn-sm" data-a="addItem">${ic('plus',15)} Add item</button>
+  </div>
+  <div class="card"><div class="tablewrap">
+  ${list.length ? `<table class="tbl">
+    <thead><tr><th>Item</th><th>HSN</th><th>Unit</th><th>GST</th><th class="r">Rate</th><th class="r hide-sm">Sold</th><th class="r hide-sm">Tax per unit</th></tr></thead>
+    <tbody>${list.map(it => `<tr data-a="quickBill" data-v="${it.id}">
+      <td><span style="font-weight:600">${esc(it.name)}</span></td>
+      <td><span class="mono" style="font-size:12.5px;color:var(--ink2)">${it.hsn}</span></td>
+      <td><span class="pill soft">${it.unit}</span></td>
+      <td><span class="pill" style="background:${it.gst>=18?'#e7f5ef':it.gst>=12?'#f0eafb':'#eef4fb'};color:${it.gst>=18?'#0a8f5f':it.gst>=12?'#7a3fd0':'#1c5fa8'}">${it.gst}%</span></td>
+      <td class="r"><span class="money">${fmt(it.rate)}</span></td>
+      <td class="r hide-sm num" style="color:var(--ink2)">${sold(it) || '—'}</td>
+      <td class="r hide-sm"><span class="money" style="color:var(--muted)">${fmt(it.rate*it.gst/100)}</span></td>
+    </tr>`).join('')}</tbody></table>`
+  : `<div class="empty"><div class="ttl">Nothing matches “${esc(S.itemQ)}”</div>
+      <div class="msg">Add it to the catalogue with its HSN code and GST rate, and Lixi will recognise it by name from then on.</div>
+      <button class="btn btn-p" data-a="addItem" style="margin:0 auto">${ic('plus',15)} Add item</button></div>`}
+  </div></div>`;
+}
+
+/* ---------- compliance: e-invoices ---------- */
+function einvoicesPage(){
+  const b2b = invoices.filter(i => i.eiStatus !== 'NOT_APPLICABLE');
+  const gen = b2b.filter(i => i.eiStatus === 'GENERATED');
+  const pend = b2b.filter(i => i.eiStatus === 'PENDING');
+  const rej = b2b.filter(i => i.eiStatus === 'ACTION_REQUIRED');
+  return `
+  <div class="kpis" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:16px">
+    <div class="kpi" style="--k:#0a8f5f"><div class="lab">Generated</div><div class="val num">${gen.length}</div><div class="sub">IRN received from the IRP</div></div>
+    <div class="kpi" style="--k:#a86400"><div class="lab">Pending</div><div class="val num">${pend.length}</div><div class="sub">${fmt0(pend.reduce((a,i)=>a+i.total,0))} of B2B value</div></div>
+    <div class="kpi" style="--k:#c0392b"><div class="lab">Rejected</div><div class="val num">${rej.length}</div><div class="sub">Needs a correction before retry</div></div>
+  </div>
+  ${pend.length ? `<div class="card" style="margin-bottom:14px">
+    <div class="card-head"><h3>File the pending ones</h3><div class="spacer"></div>
+      <button class="btn btn-sm btn-p" data-a="fileAllEinv">Generate all ${pend.length}</button></div></div>` : ''}
+  <div class="card"><div class="tablewrap">
+    <table class="tbl">
+      <thead><tr><th>Invoice</th><th>Customer</th><th class="r">Amount</th><th>Status</th><th class="hide-sm">IRN</th><th class="hide-sm">Ack no.</th><th style="width:120px"></th></tr></thead>
+      <tbody>${b2b.map(i => { const av = avatar(i.customerName);
+        return `<tr data-a="openInv" data-v="${i.no}">
+          <td><span class="docno">${i.no.split('/').pop()}</span></td>
+          <td><div class="who"><span class="av" style="background:${av[0]};color:${av[1]}">${i.customerName[0]}</span>
+            <span class="nm">${esc(i.customerName)}</span></div></td>
+          <td class="r"><span class="money">${fmt(i.total)}</span></td>
+          <td>${pill(EI, i.eiStatus)}</td>
+          <td class="hide-sm"><span class="mono" style="font-size:10.5px;color:var(--muted)">${i.irn ? i.irn.slice(0,18)+'…' : '—'}</span></td>
+          <td class="hide-sm"><span class="mono" style="font-size:12px;color:var(--ink2)">${i.ackNo || '—'}</span></td>
+          <td onclick="event.stopPropagation()">
+            ${i.eiStatus === 'PENDING' ? `<button class="btn btn-sm btn-p" data-a="genEinv" data-v="${i.no}">Generate</button>` :
+              i.eiStatus === 'ACTION_REQUIRED' ? `<button class="btn btn-sm btn-d" data-a="openRecover" data-v="${i.no}">Fix & retry</button>` :
+              i.eiStatus === 'GENERATED' ? `<button class="btn btn-sm btn-o" data-a="export">Download</button>` : ''}
+          </td></tr>`; }).join('')}</tbody></table>
+  </div></div>`;
+}
+
+/* ---------- compliance: e-way bills ---------- */
+function ewaybillsPage(){
+  const active = ewbActive(), due = ewbDue();
+  return `
+  ${due.length ? `<div class="card" style="margin-bottom:14px;border-color:#f0dcb4;background:#fffdf7">
+    <div class="card-body" style="display:flex;align-items:center;gap:13px;padding:14px 16px">
+      <div class="qico" style="background:var(--amberbg);color:var(--amber)">${ic('warn',17)}</div>
+      <div style="flex:1"><div style="font-weight:700">${due.length} consignment${due.length>1?'s':''} above ₹50,000 without an e-way bill</div>
+        <div style="font-size:12.5px;color:var(--muted)">Goods can be detained in transit without one. Generate before dispatch.</div></div>
+      <button class="btn btn-p btn-sm" data-a="openEwb" data-v="${due[0].no}">Generate now</button>
+    </div></div>` : ''}
+  <div class="card">
+    <div class="card-head"><h3>In movement</h3><span class="pill soft">${active.length} active</span></div>
+    <div class="tablewrap">
+    ${active.length || due.length ? `<table class="tbl">
+      <thead><tr><th>Invoice</th><th>Customer</th><th class="r">Value</th><th>EWB number</th><th>Valid till</th><th>Status</th><th style="width:120px"></th></tr></thead>
+      <tbody>${active.concat(due).map(i => { const av = avatar(i.customerName);
+        return `<tr data-a="openInv" data-v="${i.no}">
+          <td><span class="docno">${i.no.split('/').pop()}</span></td>
+          <td><div class="who"><span class="av" style="background:${av[0]};color:${av[1]}">${i.customerName[0]}</span>
+            <span class="nm">${esc(i.customerName)}</span></div></td>
+          <td class="r"><span class="money">${fmt(i.total)}</span></td>
+          <td><span class="mono" style="font-size:12.5px;color:var(--ink2)">${i.ewbNo || '—'}</span></td>
+          <td style="color:var(--ink2)">${i.ewbValid || '—'}</td>
+          <td>${pill(EWB, i.ewbStatus)}</td>
+          <td onclick="event.stopPropagation()">
+            ${i.ewbStatus === 'ACTIVE' ? `<button class="btn btn-sm btn-o" data-a="extendEwb" data-v="${i.no}">Extend</button>`
+            : `<button class="btn btn-sm btn-p" data-a="openEwb" data-v="${i.no}">Generate</button>`}
+          </td></tr>`; }).join('')}</tbody></table>`
+    : `<div class="empty"><div class="ttl">Nothing in movement</div>
+        <div class="msg">E-way bills appear here once a consignment crosses ₹50,000. Elixir prompts you on the invoice when one is needed.</div></div>`}
+    </div></div>`;
+}
+
+/* ---------- reports ---------- */
+function reportsPage(){
+  const slabs = { 0:0, 5:0, 12:0, 18:0 };
+  const taxable = { 0:0, 5:0, 12:0, 18:0 };
+  invoices.filter(i=>i.payStatus!=='cancelled').forEach(i => i.lines.forEach(l => {
+    if (slabs[l.gst] != null){ slabs[l.gst] += l.tax; taxable[l.gst] += l.taxable; } }));
+  const totalTax = Object.values(slabs).reduce((a,b)=>a+b,0);
+  const b2b = invoices.filter(i => { const c = cust(i.customerId); return c && c.gstin; });
+  const inter = invoices.filter(i => i.inter);
+
+  const REPORTS = [
+    ['Sales register','Every issued invoice, line by line','doc','#eef4fb','#1c5fa8'],
+    ['GSTR-1 summary','B2B, B2C and inter-state, ready to file','shield','#e7f5ef','#0a8f5f'],
+    ['E-invoice register','IRN, acknowledgement number and date','shield','#f0eafb','#7a3fd0'],
+    ['E-way bill register','Movement, validity and vehicle','truck','#fdf3e3','#a86400'],
+    ['Customer outstanding','Receivables with ageing buckets','users','#fbeef2','#c0398b'],
+    ['HSN summary','Quantity and value by HSN code','box','#eef4fb','#1c5fa8'],
+  ];
+  return `
+  <div class="grid" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start">
+    <div class="card">
+      <div class="card-head"><h3>Output tax by slab</h3><div class="spacer"></div>
+        <span class="pill soft">${fmt0(totalTax)} total</span></div>
+      <div class="tablewrap"><table class="tbl">
+        <thead><tr><th>Rate</th><th class="r">Taxable value</th><th class="r">Tax</th></tr></thead>
+        <tbody>${[5,12,18].map(r => `<tr style="cursor:default">
+          <td><span class="pill" style="background:${r>=18?'#e7f5ef':r>=12?'#f0eafb':'#eef4fb'};color:${r>=18?'#0a8f5f':r>=12?'#7a3fd0':'#1c5fa8'}">GST ${r}%</span></td>
+          <td class="r"><span class="money">${fmt(taxable[r])}</span></td>
+          <td class="r"><span class="money">${fmt(slabs[r])}</span></td></tr>`).join('')}
+        </tbody></table></div>
+      <div style="display:flex;padding:12px 15px;border-top:1px solid var(--line);font-weight:800">
+        Total output tax<div class="spacer"></div><span class="money">${fmt(totalTax)}</span></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Filing snapshot</h3><div class="spacer"></div><span class="pill soft">FY 2026-27</span></div>
+      <div class="card-body" style="display:grid;gap:13px">
+        ${[['B2B invoices', b2b.length + ' of ' + invoices.length, 'Reported invoice-wise in GSTR-1'],
+           ['Inter-state supplies', inter.length + ' invoices', 'IGST charged, table 7 of GSTR-1'],
+           ['Credit notes', returns.length + ' issued', '−' + fmt0(returns.reduce((a,r)=>a+r.total,0)) + ' adjustment'],
+           ['E-invoices pending', eiPending().length + ' invoices', 'Must carry an IRN before filing']]
+          .map(([k,v,s]) => `<div style="display:flex;align-items:flex-start;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--line2)">
+            <div style="flex:1"><div style="font-weight:700;font-size:13.5px">${k}</div>
+            <div style="font-size:12px;color:var(--muted)">${s}</div></div>
+            <div style="font-weight:700;white-space:nowrap" class="num">${v}</div></div>`).join('')}
+      </div>
+    </div>
+  </div>
+  <div class="sec card">
+    <div class="card-head"><h3>Registers</h3><div class="spacer"></div>
+      <span style="font-size:12.5px;color:var(--muted)">Exports as CSV or Tally XML</span></div>
+    <div class="queue">${REPORTS.map(([t,s,i,bg,fg]) => `<div class="qrow">
+      <div class="qico" style="background:${bg};color:${fg}">${ic(i,17)}</div>
+      <div class="qmain"><div class="qttl">${t}</div><div class="qsub">${s}</div></div>
+      <button class="btn btn-sm btn-o" data-a="export">${ic('dl',14)} Export</button></div>`).join('')}</div>
+  </div>`;
+}
+
+/* ---------- settings / team / integrations / help ---------- */
+function settingsPage(){
+  const rows = [['Legal name', BIZ.name],['GSTIN', BIZ.gstin],['Registered address', BIZ.addr],
+    ['State', BIZ.state + ' (' + BIZ.stateCode + ')'],['Invoice prefix', BIZ.prefix],
+    ['Business type', BIZ.type],['Bank account', BIZ.bank]];
+  return `
+  <div class="grid" style="grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);align-items:start">
+    <div class="card">
+      <div class="card-head"><h3>Business details</h3><div class="spacer"></div>
+        <button class="btn btn-sm btn-o" data-a="soon">Edit</button></div>
+      <div class="card-body" style="display:grid;gap:0">
+        ${rows.map(([k,v]) => `<div style="display:flex;gap:20px;padding:11px 0;border-bottom:1px solid var(--line2)">
+          <div style="width:170px;flex:none;font-size:12.5px;color:var(--muted);font-weight:600">${k}</div>
+          <div style="font-weight:600" class="${k==='GSTIN'||k==='Invoice prefix'?'mono':''}">${esc(v)}</div></div>`).join('')}
+      </div>
+    </div>
+    <div style="display:grid;gap:14px">
+      <div class="card">
+        <div class="card-head"><h3>Your account</h3></div>
+        <div class="card-body">
+          <div style="display:flex;align-items:center;gap:13px;margin-bottom:15px">
+            <div class="av" style="width:46px;height:46px;border-radius:13px;background:var(--bluebg);color:var(--navy);font-size:18px">${USER.name[0]}</div>
+            <div><div style="font-weight:800;font-size:15px">${USER.name}</div>
+              <div style="font-size:12.5px;color:var(--muted)">${USER.role}</div></div></div>
+          <div style="font-size:13px;color:var(--ink2);line-height:1.9">
+            ${USER.email}<br><span class="mono">${USER.phone}</span></div>
+          <button class="btn btn-d" style="width:100%;margin-top:15px" data-a="logout">${ic('out',16)} Sign out</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Document numbering</h3></div>
+        <div class="card-body" style="display:grid;gap:9px;font-size:13.5px">
+          ${[['Invoices', BIZ.prefix + String(seq.inv).padStart(6,'0')],
+             ['Quotations','SLT/QUO/2026-27/' + String(seq.quo).padStart(6,'0')],
+             ['Credit notes','SLT/CN/2026-27/' + String(seq.cn).padStart(6,'0')]]
+            .map(([k,v]) => `<div style="display:flex;justify-content:space-between;gap:14px">
+              <span style="color:var(--muted)">Next ${k.toLowerCase()}</span>
+              <span class="mono" style="font-weight:600;font-size:12.5px">${v}</span></div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+function teamPage(){
+  const team = [
+    [USER.name,'Owner','Full access — billing, GST filing, settings','#eef4fb','#1c5fa8',true],
+    ['Suresh K','Manager','Create invoices and quotations','#e7f5ef','#0a8f5f',false],
+    ['Lakshmi R','Accountant','View reports and file GST returns','#f0eafb','#7a3fd0',false],
+    ['Ravi T','Staff','Record payments only','#fdf3e3','#a86400',false],
+  ];
+  return `
+  <div style="display:flex;align-items:center;gap:9px;margin-bottom:14px">
+    <div class="eyebrow">${team.length} people with access</div><div class="spacer"></div>
+    <button class="btn btn-p btn-sm" data-a="soon">${ic('plus',15)} Invite someone</button></div>
+  <div class="card"><div class="queue">
+    ${team.map(([n,r,s,bg,fg,you]) => `<div class="qrow">
+      <div class="av" style="width:36px;height:36px;background:${bg};color:${fg};font-size:14px">${n[0]}</div>
+      <div class="qmain"><div class="qttl">${n} ${you?'<span class="pill soft" style="margin-left:4px">You</span>':''}</div>
+        <div class="qsub">${s}</div></div>
+      <span class="pill" style="background:${bg};color:${fg}">${r}</span>
+      <button class="iconbtn" data-a="soon">${ic('dots',17)}</button></div>`).join('')}
+  </div></div>`;
+}
+function integrationsPage(){
+  const defs = [
+    ['GST Suvidha Provider','IRP v1.1 — e-invoice and e-way bill','shield','#e7f5ef','#0a8f5f'],
+    ['WhatsApp Business API','Send invoices and payment reminders','wa','#eafaf1','#25923f'],
+    ['HDFC Bank feed','Match incoming payments automatically','chart','#eef4fb','#1c5fa8'],
+    ['Tally export','Daily XML sync to your accountant','dl','#f0eafb','#7a3fd0'],
+    ['Razorpay payment links','Collect online, settle to your bank','plug','#fdf3e3','#a86400'],
+  ];
+  return `<div class="card"><div class="queue">
+    ${defs.map(([n,s,i,bg,fg]) => { const on = !!S.integrations[n];
+      return `<div class="qrow">
+        <div class="qico" style="background:${bg};color:${fg}">${ic(i,17)}</div>
+        <div class="qmain"><div class="qttl">${n}</div><div class="qsub">${s}</div></div>
+        <span style="font-size:12px;font-weight:700;color:${on?'var(--green)':'var(--muted2)'};margin-right:2px">${on?'Connected':'Off'}</span>
+        <button class="tog" data-a="toggleInt" data-v="${esc(n)}" role="switch" aria-checked="${on}" aria-label="${esc(n)}"
+          style="background:${on?'var(--green)':'#d4dbe4'}"><i style="left:${on?'19px':'3px'}"></i></button>
+      </div>`; }).join('')}
+  </div></div>`;
+}
+function helpPage(){
+  const faq = [
+    ['How do I generate an e-invoice?','Issue the invoice, then choose Generate e-invoice. Lixi files it with the IRP and returns the IRN and signed QR, which are printed on the PDF.'],
+    ['When is an e-way bill required?','For any consignment above ₹50,000. Elixir flags the invoice and pre-fills what it can — you add the vehicle number and distance.'],
+    ['Can I edit an invoice after issuing it?','No. Issued invoices are locked for GST. Cancel and reissue within 24 hours, or raise a credit note if goods came back.'],
+    ['How do I file GSTR-1?','Open Reports and export the GSTR-1 summary. Direct filing is part of the full plan.'],
+    ['Why does one customer show IGST?','Their GSTIN is registered in another state, so the supply is inter-state. Elixir picks the right heads from the state code — you never choose manually.'],
+  ];
+  return `
+  <div class="grid" style="grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);align-items:start">
+    <div class="card">
+      <div class="card-head"><h3>Common questions</h3></div>
+      <div class="card-body" style="display:grid;gap:0">
+        ${faq.map(([q,a]) => `<div style="padding:13px 0;border-bottom:1px solid var(--line2)">
+          <div style="font-weight:700;font-size:13.5px;margin-bottom:4px">${q}</div>
+          <div style="color:var(--muted);font-size:13px;line-height:1.55">${a}</div></div>`).join('')}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Reach a person</h3></div>
+      <div class="card-body" style="display:grid;gap:9px">
+        <button class="btn" style="background:#25923f;color:#fff;width:100%;justify-content:flex-start" data-a="waSupport">${ic('wa',16)} Chat on WhatsApp</button>
+        <button class="btn btn-o" style="width:100%;justify-content:flex-start" data-a="soon">Call 1800-123-4567</button>
+        <button class="btn btn-o" style="width:100%;justify-content:flex-start" data-a="soon">Email help@elixirbooks.in</button>
+        <div style="font-size:12px;color:var(--muted2);margin-top:5px;line-height:1.5">
+          Support is open 9am–9pm IST, seven days. GST filing deadlines are covered round the clock.</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---------- drawer: document detail ---------- */
+function docLines(d){
+  return `<table class="lines">
+    <thead><tr><th>Item</th><th>HSN</th><th class="r">Qty</th><th class="r">Rate</th><th class="r">GST</th><th class="r">Taxable</th></tr></thead>
+    <tbody>${d.lines.map(l => `<tr>
+      <td style="font-weight:600">${esc(l.name)}</td>
+      <td><span class="mono" style="font-size:12px;color:var(--muted)">${l.hsn}</span></td>
+      <td class="r num">${l.qty} <span style="color:var(--muted2);font-size:11px">${l.unit}</span></td>
+      <td class="r money" style="font-weight:500">${fmt(l.rate)}</td>
+      <td class="r"><span class="pill soft">${l.gst}%</span></td>
+      <td class="r money">${fmt(l.taxable)}</td></tr>`).join('')}</tbody></table>`;
+}
+function docTotals(d){
+  return `<div class="totals">
+    <div class="trow"><span>Taxable value</span><span class="money">${fmt(d.sub)}</span></div>
+    ${d.inter ? `<div class="trow"><span>IGST</span><span class="money">${fmt(d.igst)}</span></div>`
+      : `<div class="trow"><span>CGST</span><span class="money">${fmt(d.cgst)}</span></div>
+         <div class="trow"><span>SGST</span><span class="money">${fmt(d.sgst)}</span></div>`}
+    ${d.round ? `<div class="trow"><span>Rounding</span><span class="money">${fmt(d.round)}</span></div>` : ''}
+    <div class="trow grand"><span>Total</span><span class="money">${fmt(d.total)}</span></div></div>`;
+}
+function drawer(){
+  const k = S.drawer.kind;
+  if (k === 'invoice') return invoiceDrawer(findInv(S.drawer.id));
+  if (k === 'quote')   return simpleDocDrawer(quotes.find(q => q.no === S.drawer.id), 'quote');
+  if (k === 'cnote')   return simpleDocDrawer(returns.find(r => r.no === S.drawer.id), 'cnote');
+  return '';
+}
+function invoiceDrawer(inv){
+  if (!inv) return '';
+  const c = cust(inv.customerId), av = avatar(inv.customerName);
+  const tl = [{ t:'Invoice issued', s: inv.date + ' 2026 · 10:24', c:'#1c5fa8' }];
+  if (inv.eiStatus === 'GENERATED') tl.unshift({ t:'E-invoice generated · IRN received', s:(inv.ackDate||inv.date) + ' · 10:25', c:'#0a8f5f' });
+  if (inv.eiStatus === 'ACTION_REQUIRED') tl.unshift({ t:'E-invoice rejected by the IRP', s: inv.date + ' · 10:25', c:'#c0392b' });
+  if (inv.ewbStatus === 'ACTIVE') tl.unshift({ t:'E-way bill generated', s: inv.date + ' · 10:30', c:'#0a8f5f' });
+  if (inv.payStatus === 'paid') tl.unshift({ t:'Payment received in full', s: inv.date + ' · 14:10', c:'#0a8f5f' });
+  if (inv.payStatus === 'cancelled') tl.unshift({ t:'Invoice cancelled', s:'23 Jul · 15:02', c:'#c0392b' });
+
+  return `<aside class="drawer" data-anim="drawer:${inv.no}" role="dialog" aria-label="Invoice ${inv.no}">
+    <div class="dr-head">
+      <div style="flex:1;min-width:0">
+        <div class="eyebrow">Tax invoice</div>
+        <div class="dr-title mono">${inv.no}</div>
+        <div style="display:flex;gap:6px;margin-top:7px;flex-wrap:wrap">
+          ${pill(PAY, inv.payStatus)}${pill(EI, inv.eiStatus)}
+          ${inv.ewbStatus !== 'NOT_REQUIRED' ? pill(EWB, inv.ewbStatus) : ''}</div>
+      </div>
+      <button class="iconbtn" data-a="closeDrawer" aria-label="Close">${ic('x',18)}</button>
+    </div>
+    <div class="dr-body" data-scroll="drawer:${S.drawer&&S.drawer.id}">
+      <div class="paper">
+        <div class="paper-head">
+          <div><div class="pl">Billed to</div>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:5px">
+              <span class="av" style="background:${av[0]};color:${av[1]}">${inv.customerName[0]}</span>
+              <span><span class="pv" style="display:block">${esc(inv.customerName)}</span>
+              <span class="mono" style="font-size:11.5px;color:var(--muted)">${c && c.gstin ? c.gstin : 'Unregistered · B2C'}</span></span></div></div>
+          <div style="text-align:right">
+            <div class="pl">Place of supply</div>
+            <div class="pv">${c ? esc(c.state) : '—'} <span style="color:var(--muted2)">(${c?c.stateCode:''})</span></div>
+            <div style="margin-top:8px"><span class="pill" style="background:${inv.inter?'#f0eafb':'#eef4fb'};color:${inv.inter?'#7a3fd0':'#1c5fa8'}">
+              ${inv.inter ? 'Inter-state · IGST' : 'Intra-state · CGST + SGST'}</span></div></div>
+        </div>
+        ${docLines(inv)}
+        ${docTotals(inv)}
+      </div>
+
+      ${inv.eiStatus === 'GENERATED' ? `<div class="card" style="margin-top:14px">
+        <div class="card-head"><h3>E-invoice</h3>${pill(EI,'GENERATED')}<div class="spacer"></div>
+          <button class="btn btn-sm btn-o" data-a="openEiCancel" data-v="${inv.no}">Cancel IRN</button></div>
+        <div class="card-body" style="display:flex;gap:16px;align-items:flex-start">
+          <img src="${makeQR(inv.no + inv.irn)}" alt="Signed QR code" style="width:104px;height:104px;border:1px solid var(--line);border-radius:9px;flex:none">
+          <div style="min-width:0;flex:1">
+            <div class="pl">IRN</div><div class="irn" style="margin-bottom:9px">${inv.irn}</div>
+            <div style="display:flex;gap:24px"><div><div class="pl">Ack no.</div><div class="mono" style="font-size:12.5px;font-weight:600">${inv.ackNo}</div></div>
+            <div><div class="pl">Ack date</div><div style="font-size:12.5px;font-weight:600">${inv.ackDate}</div></div></div>
+          </div></div></div>` : ''}
+
+      ${inv.eiStatus === 'ACTION_REQUIRED' ? `<div class="card" style="margin-top:14px;border-color:#f0c9c4;background:#fffafa">
+        <div class="card-body" style="display:flex;gap:13px;align-items:flex-start">
+          <div class="qico" style="background:var(--redbg);color:var(--red)">${ic('warn',17)}</div>
+          <div style="flex:1"><div style="font-weight:800;margin-bottom:3px">The IRP rejected this invoice</div>
+            <div style="font-size:13px;color:var(--muted);margin-bottom:11px">${esc(inv.eiError || 'The portal would not accept the details sent.')}</div>
+            <button class="btn btn-sm btn-p" data-a="openRecover" data-v="${inv.no}">Fix the GSTIN and retry</button></div></div></div>` : ''}
+
+      ${inv.eiStatus === 'PENDING' ? `<div class="card" style="margin-top:14px;border-color:#f0dcb4;background:#fffdf7">
+        <div class="card-body" style="display:flex;gap:13px;align-items:center">
+          <div class="qico" style="background:var(--amberbg);color:var(--amber)">${ic('shield',17)}</div>
+          <div style="flex:1"><div style="font-weight:800">No IRN yet</div>
+            <div style="font-size:12.5px;color:var(--muted)">A B2B invoice needs an IRN before it can be filed in GSTR-1.</div></div>
+          <button class="btn btn-sm btn-p" data-a="genEinv" data-v="${inv.no}">Generate e-invoice</button></div></div>` : ''}
+
+      ${inv.ewbStatus === 'ACTIVE' ? `<div class="card" style="margin-top:14px">
+        <div class="card-head"><h3>E-way bill</h3>${pill(EWB,'ACTIVE')}<div class="spacer"></div>
+          <button class="btn btn-sm btn-o" data-a="extendEwb" data-v="${inv.no}">Extend</button>
+          <button class="btn btn-sm btn-o" data-a="openEwbCancel" data-v="${inv.no}">Cancel</button></div>
+        <div class="card-body" style="display:flex;gap:34px">
+          <div><div class="pl">Number</div><div class="mono" style="font-weight:600">${inv.ewbNo}</div></div>
+          <div><div class="pl">Valid till</div><div style="font-weight:600">${inv.ewbValid}</div></div></div></div>` : ''}
+
+      ${inv.ewbStatus === 'RECOMMENDED' ? `<div class="card" style="margin-top:14px;border-color:#f0dcb4;background:#fffdf7">
+        <div class="card-body" style="display:flex;gap:13px;align-items:center">
+          <div class="qico" style="background:var(--amberbg);color:var(--amber)">${ic('truck',17)}</div>
+          <div style="flex:1"><div style="font-weight:800">This consignment needs an e-way bill</div>
+            <div style="font-size:12.5px;color:var(--muted)">Value is above ₹50,000. Generate it before the goods move.</div></div>
+          <button class="btn btn-sm btn-p" data-a="openEwb" data-v="${inv.no}">Generate</button></div></div>` : ''}
+
+      <div class="card" style="margin-top:14px">
+        <div class="card-head"><h3>History</h3></div>
+        <div class="card-body"><div class="tl">${tl.map(x => `<div class="tlrow">
+          <span class="tldot" style="color:${x.c};background:${x.c}"></span>
+          <div class="tlttl">${x.t}</div><div class="tltime">${x.s}</div></div>`).join('')}</div></div></div>
+    </div>
+    <div class="dr-foot">
+      <button class="btn btn-p" data-a="openShare" data-v="${inv.no}">${ic('send',15)} Share</button>
+      ${inv.payStatus !== 'paid' && inv.payStatus !== 'cancelled'
+        ? `<button class="btn btn-g" data-a="openPay" data-v="${inv.no}">Record payment</button>` : ''}
+      <button class="btn btn-o" data-a="export">${ic('dl',15)} PDF</button>
+      <div class="spacer"></div>
+      ${inv.payStatus !== 'cancelled' ? `<button class="btn btn-d" data-a="openCancel" data-v="${inv.no}">Cancel invoice</button>` : ''}
+    </div>
+  </aside>`;
+}
+function simpleDocDrawer(d, kind){
+  if (!d) return '';
+  const c = cust(d.customerId), av = avatar(d.customerName);
+  const isQ = kind === 'quote';
+  return `<aside class="drawer" data-anim="drawer:${d.no}" role="dialog" aria-label="${isQ?'Quotation':'Credit note'} ${d.no}">
+    <div class="dr-head">
+      <div style="flex:1;min-width:0">
+        <div class="eyebrow">${isQ ? 'Quotation' : 'Credit note'}</div>
+        <div class="dr-title mono">${d.no}</div>
+        <div style="display:flex;gap:6px;margin-top:7px">
+          ${isQ ? pill(QST, d.status) : `<span class="pill" style="background:var(--magentabg);color:var(--magenta)">Issued</span>`}</div>
+      </div>
+      <button class="iconbtn" data-a="closeDrawer" aria-label="Close">${ic('x',18)}</button>
+    </div>
+    <div class="dr-body" data-scroll="drawer:${S.drawer&&S.drawer.id}">
+      <div class="paper">
+        <div class="paper-head">
+          <div><div class="pl">${isQ ? 'Quoted to' : 'Credited to'}</div>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:5px">
+              <span class="av" style="background:${av[0]};color:${av[1]}">${d.customerName[0]}</span>
+              <span><span class="pv" style="display:block">${esc(d.customerName)}</span>
+              <span class="mono" style="font-size:11.5px;color:var(--muted)">${c && c.gstin ? c.gstin : 'B2C'}</span></span></div></div>
+          <div style="text-align:right">
+            <div class="pl">${isQ ? 'Valid till' : 'Against invoice'}</div>
+            <div class="pv ${isQ?'':'mono'}" style="${isQ?'':'font-size:13px'}">${isQ ? d.validTill : d.invNo.split('/').pop()}</div>
+            ${!isQ ? `<div style="margin-top:8px"><div class="pl">Reason</div><div class="pv" style="font-size:13px">${esc(d.reason)}</div></div>` : ''}</div>
+        </div>
+        ${docLines(d)}
+        ${docTotals(d)}
+      </div>
+      ${isQ && d.invNo ? `<div class="card" style="margin-top:14px"><div class="card-body" style="display:flex;align-items:center;gap:12px">
+        <div class="qico" style="background:var(--greenbg);color:var(--green)">${ic('check',16)}</div>
+        <div style="flex:1"><div style="font-weight:700">Accepted and converted</div>
+          <div style="font-size:12.5px;color:var(--muted)">Invoice <span class="mono">${d.invNo.split('/').pop()}</span> was raised from this quotation.</div></div>
+        <button class="btn btn-sm btn-o" data-a="openInv" data-v="${d.invNo}">Open invoice</button></div></div>` : ''}
+    </div>
+    <div class="dr-foot">
+      <button class="btn btn-p" data-a="openShare" data-v="${d.no}">${ic('send',15)} Share</button>
+      <button class="btn btn-o" data-a="export">${ic('dl',15)} PDF</button>
+      <div class="spacer"></div>
+      ${isQ && d.status !== 'accepted' ? `<button class="btn btn-g" data-a="convertQuote" data-v="${d.no}">Convert to invoice</button>` : ''}
+    </div>
+  </aside>`;
+}
+
+/* ---------- modals ---------- */
+function mShell(title, sub, body, foot, cls){
+  return `<div class="modal ${cls||''}" data-anim="modal:${S.modal?S.modal.kind:''}" role="dialog" aria-modal="true" aria-label="${esc(title)}">
+    <div class="md-head"><div style="flex:1">
+      <div class="dr-title">${esc(title)}</div>
+      ${sub ? `<div style="font-size:12.5px;color:var(--muted);margin-top:2px">${sub}</div>` : ''}</div>
+      <button class="iconbtn" data-a="closeModal" aria-label="Close">${ic('x',18)}</button></div>
+    ${body}${foot || ''}</div>`;
+}
+function composer(f, kind){
+  const accent = kind === 'quote' ? 'var(--green)' : 'var(--navy)';
+  const q = (f.q || '').toLowerCase();
+  const cat = items.filter(it => !q || it.name.toLowerCase().includes(q) || it.hsn.includes(q));
+  const d = (f.customerId && f.lines.length) ? build(f.customerId, f.lines) : null;
+  const c = f.customerId ? cust(f.customerId) : null;
+  return `<div class="md-body" data-scroll="modal:${S.modal?S.modal.kind:''}" style="padding:0"><div class="composer">
+    <div class="left">
+      <div class="field"><label>Bill to</label>
+        <div class="picker">${customers.map(x => `<button class="pickrow ${f.customerId===x.id?'on':''}" data-a="pickCust" data-v="${x.id}" data-kind="${kind}">
+          <span class="radio ${f.customerId===x.id?'on':''}"><i></i></span>
+          <span style="flex:1;min-width:0"><span class="nm">${esc(x.name)}</span>
+          <span class="sb mono">${x.gstin || 'B2C · ' + x.phone}</span></span>
+          ${x.stateCode!==BIZ.stateCode?'<span class="pill" style="background:#f0eafb;color:#7a3fd0">IGST</span>':''}</button>`).join('')}</div>
+        ${c ? `<div class="hint">${esc(c.state)} · ${c.stateCode !== BIZ.stateCode
+          ? 'inter-state, so IGST is charged' : 'same state, so CGST and SGST are split'}</div>` : ''}
+      </div>
+      <div class="field" style="margin-bottom:0"><label>Add items</label>
+        <input class="inp" data-k="catq" data-i="${kind}Q" value="${esc(f.q||'')}" placeholder="Filter the catalogue" style="margin-bottom:9px">
+        <div class="catgrid">${cat.map(it => `<button class="catbtn" data-a="addLine" data-v="${it.id}" data-kind="${kind}">
+          <div class="n">${esc(it.name)}</div><div class="m">${fmt(it.rate)} · ${it.gst}%</div></button>`).join('')}</div>
+        ${!cat.length ? '<div class="hint">Nothing matches. Add it from the Items page first.</div>' : ''}
+      </div>
+    </div>
+    <div class="right">
+      ${f.lines.length ? `
+        <table class="tbl" style="margin:-4px 0 0">
+          <thead><tr><th>Item</th><th class="c">Qty</th><th class="r">Rate</th><th class="r">GST</th><th class="r">Amount</th><th style="width:32px"></th></tr></thead>
+          <tbody>${f.lines.map(l => { const it = item(l.itemId);
+            return `<tr style="cursor:default">
+              <td><div style="font-weight:600;font-size:13px">${esc(it.name)}</div>
+                <div class="mono" style="font-size:11px;color:var(--muted2)">HSN ${it.hsn}</div></td>
+              <td class="c"><span class="qty">
+                <button data-a="incLine" data-v="${it.id}" data-d="-1" data-kind="${kind}" aria-label="Reduce">−</button>
+                <span class="v">${l.qty}</span>
+                <button data-a="incLine" data-v="${it.id}" data-d="1" data-kind="${kind}" aria-label="Increase">+</button></span></td>
+              <td class="r money" style="font-weight:500">${fmt(it.rate)}</td>
+              <td class="r"><span class="pill soft">${it.gst}%</span></td>
+              <td class="r money">${fmt(it.rate*l.qty)}</td>
+              <td class="c"><button class="iconbtn" style="width:26px;height:26px" data-a="rmLine" data-v="${it.id}" data-kind="${kind}" aria-label="Remove">${ic('x',14)}</button></td>
+            </tr>`; }).join('')}</tbody></table>
+        <div class="spacer"></div>
+        <div style="border-top:1px solid var(--line);margin-top:14px;padding-top:13px">
+          <div class="trow"><span>Taxable value</span><span class="money">${fmt(d.sub)}</span></div>
+          ${d.inter ? `<div class="trow"><span>IGST</span><span class="money">${fmt(d.igst)}</span></div>`
+            : `<div class="trow"><span>CGST</span><span class="money">${fmt(d.cgst)}</span></div>
+               <div class="trow"><span>SGST</span><span class="money">${fmt(d.sgst)}</span></div>`}
+          ${d.round ? `<div class="trow"><span>Rounding</span><span class="money">${fmt(d.round)}</span></div>` : ''}
+          <div class="trow grand"><span>Total</span><span class="money" style="color:${accent}">${fmt(d.total)}</span></div>
+        </div>`
+      : `<div class="empty" style="margin:auto"><div class="ttl">Nothing on it yet</div>
+          <div class="msg">Pick who you are billing, then tap items from the catalogue. GST is worked out from their state code as you go.</div></div>`}
+    </div></div></div>`;
+}
+function modal(){
+  const m = S.modal;
+
+  if (m.kind === 'newInvoice'){
+    const ready = S.form.customerId && S.form.lines.length;
+    return mShell('New invoice', 'GST is derived from the customer’s state — you never pick the heads yourself',
+      composer(S.form, 'form'),
+      `<div class="md-foot"><span style="font-size:12.5px;color:var(--muted)">
+        ${ready ? 'Issuing locks this document for GST.' : 'Pick a customer and at least one item.'}</span>
+        <div class="spacer"></div>
+        <button class="btn btn-o" data-a="closeModal">Cancel</button>
+        <button class="btn btn-g" data-a="issueInvoice" ${ready?'':'disabled'}>Issue invoice</button></div>`);
+  }
+  if (m.kind === 'newQuote'){
+    const ready = S.qForm.customerId && S.qForm.lines.length;
+    return mShell('New quotation', 'Valid for 15 days · converts to a tax invoice in one click',
+      composer(S.qForm, 'quote'),
+      `<div class="md-foot"><div class="spacer"></div>
+        <button class="btn btn-o" data-a="closeModal">Cancel</button>
+        <button class="btn btn-g" data-a="createQuote" ${ready?'':'disabled'}>Send quotation</button></div>`);
+  }
+  if (m.kind === 'newReturn'){
+    const inv = S.ret.invNo ? findInv(S.ret.invNo) : null;
+    let sub = 0, tax = 0;
+    if (inv) inv.lines.forEach((l,i) => { const q = S.ret.lines[i] || 0; sub += l.rate*q; tax += l.rate*q*l.gst/100; });
+    return mShell('Record a return', 'Issued invoices are locked — a credit note reverses the tax instead',
+      `<div class="md-body" data-scroll="modal:${S.modal?S.modal.kind:''}">
+        <div class="field"><label>Against which invoice</label>
+          <div class="picker">${invoices.filter(i => i.payStatus !== 'cancelled').map(i => `
+            <button class="pickrow ${S.ret.invNo===i.no?'on':''}" data-a="pickRetInv" data-v="${i.no}">
+              <span class="radio ${S.ret.invNo===i.no?'on':''}"><i></i></span>
+              <span style="flex:1;min-width:0"><span class="nm">${esc(i.customerName)}</span>
+              <span class="sb mono">${i.no.split('/').pop()} · ${fmt(i.total)}</span></span></button>`).join('')}</div></div>
+        ${inv ? `<div class="field"><label>How much came back</label>
+          <table class="tbl" style="border:1px solid var(--line);border-radius:11px;overflow:hidden">
+            <thead><tr><th>Item</th><th class="c">Returned</th><th class="r">Rate</th><th class="r">Credit</th></tr></thead>
+            <tbody>${inv.lines.map((l,i) => { const q = S.ret.lines[i] || 0;
+              return `<tr style="cursor:default"><td><div style="font-weight:600;font-size:13px">${esc(l.name)}</div>
+                <div style="font-size:11px;color:var(--muted2)">billed ${l.qty} ${l.unit}</div></td>
+                <td class="c"><span class="qty">
+                  <button data-a="incRet" data-v="${i}" data-d="-1">−</button><span class="v">${q}</span>
+                  <button data-a="incRet" data-v="${i}" data-d="1">+</button></span></td>
+                <td class="r money" style="font-weight:500">${fmt(l.rate)}</td>
+                <td class="r money" style="color:${q?'var(--magenta)':'var(--muted2)'}">${q?fmt(l.rate*q):'—'}</td></tr>`; }).join('')}
+            </tbody></table></div>
+          <div class="field"><label>Reason</label>
+            <input class="inp" data-k="retr" data-i="ret.reason" value="${esc(S.ret.reason)}" placeholder="Damaged in transit, wrong item, short supply…"></div>
+          <div style="background:#fbfcfe;border:1px solid var(--line);border-radius:11px;padding:13px">
+            <div class="trow"><span>Taxable value</span><span class="money">${fmt(sub)}</span></div>
+            <div class="trow"><span>${inv.inter?'IGST':'CGST + SGST'}</span><span class="money">${fmt(tax)}</span></div>
+            <div class="trow grand"><span>Credit note total</span><span class="money" style="color:var(--magenta)">${fmt(Math.round(sub+tax))}</span></div></div>`
+        : `<div class="hint">Pick the invoice first and its lines will appear here.</div>`}
+      </div>`,
+      `<div class="md-foot"><div class="spacer"></div>
+        <button class="btn btn-o" data-a="closeModal">Cancel</button>
+        <button class="btn" style="background:var(--magenta);color:#fff" data-a="issueCn" ${Math.round(sub)>0?'':'disabled'}>Issue credit note</button></div>`,
+      'md');
+  }
+  if (m.kind === 'addCustomer'){
+    const a = S.newCust;
+    return mShell('Add customer', 'A GSTIN makes them B2B and turns on e-invoicing',
+      `<div class="md-body" data-scroll="modal:${S.modal?S.modal.kind:''}">
+        <div class="field"><label>Name</label><input class="inp" data-k="acn" data-i="newCust.name" value="${esc(a.name)}" placeholder="Business or person"></div>
+        <div class="split">
+          <div class="field"><label>Phone</label><input class="inp" data-k="acp" data-i="newCust.phone" value="${esc(a.phone)}" placeholder="98450 12345"></div>
+          <div class="field"><label>GSTIN <span style="text-transform:none;font-weight:600">(optional)</span></label>
+            <input class="inp mono" data-k="acg" data-i="newCust.gstin" value="${esc(a.gstin)}" placeholder="29ABCDE1234F1Z5" maxlength="15"></div>
+        </div>
+        <div class="field" style="margin-bottom:0"><label>State</label>
+          <div class="segs">${[[29,'Karnataka'],[33,'Tamil Nadu'],[36,'Telangana'],[27,'Maharashtra']].map(([c,l]) =>
+            `<button class="seg ${a.stateCode===c?'on':''}" data-a="acState" data-v="${c}">${l}</button>`).join('')}</div>
+          <div class="hint">${a.stateCode === BIZ.stateCode
+            ? 'Same state as you — invoices will split CGST and SGST.'
+            : 'Different state — invoices to them will charge IGST.'}</div></div>
+      </div>`,
+      `<div class="md-foot"><div class="spacer"></div>
+        <button class="btn btn-o" data-a="closeModal">Cancel</button>
+        <button class="btn btn-p" data-a="saveCustomer">Add customer</button></div>`, 'sm');
+  }
+  if (m.kind === 'addItem'){
+    const a = S.newItem;
+    return mShell('Add item', 'HSN and GST rate travel with the item onto every invoice',
+      `<div class="md-body" data-scroll="modal:${S.modal?S.modal.kind:''}">
+        <div class="field"><label>Item name</label><input class="inp" data-k="ain" data-i="newItem.name" value="${esc(a.name)}" placeholder="Basmati Rice 25kg Bag"></div>
+        <div class="split">
+          <div class="field"><label>HSN code</label><input class="inp mono" data-k="aih" data-i="newItem.hsn" value="${esc(a.hsn)}" placeholder="1006"></div>
+          <div class="field"><label>Rate</label><input class="inp mono" data-k="air" data-i="newItem.rate" value="${esc(a.rate)}" placeholder="1850" inputmode="decimal"></div>
+        </div>
+        <div class="field"><label>GST rate</label>
+          <div class="segs">${[0,5,12,18,28].map(g => `<button class="seg ${a.gst===g?'on':''}" data-a="aiGst" data-v="${g}">${g}%</button>`).join('')}</div></div>
+        <div class="field" style="margin-bottom:0"><label>Unit</label>
+          <div class="segs">${['PC','BAG','PKT','CAN','PACK','KG'].map(u => `<button class="seg ${a.unit===u?'on':''}" data-a="aiUnit" data-v="${u}">${u}</button>`).join('')}</div></div>
+      </div>`,
+      `<div class="md-foot"><div class="spacer"></div>
+        <button class="btn btn-o" data-a="closeModal">Cancel</button>
+        <button class="btn btn-p" data-a="saveItem">Add item</button></div>`, 'sm');
+  }
+  if (m.kind === 'ewb'){
+    const inv = findInv(m.no), e = S.ewb;
+    return mShell('Generate e-way bill', inv ? inv.no.split('/').pop() + ' · ' + inv.customerName + ' · ' + fmt(inv.total) : '',
+      `<div class="md-body" data-scroll="modal:${S.modal?S.modal.kind:''}">
+        <div class="field"><label>Transport mode</label>
+          <div class="segs">${['Road','Rail','Air','Ship'].map(x => `<button class="seg ${e.mode===x?'on':''}" data-a="ewbMode" data-v="${x}">${x}</button>`).join('')}</div></div>
+        <div class="field"><label>Transporter <span style="text-transform:none;font-weight:600">(optional)</span></label>
+          <input class="inp" data-k="ewt" data-i="ewb.transporter" value="${esc(e.transporter)}" placeholder="VRL Logistics"></div>
+        <div class="split">
+          <div class="field"><label>Vehicle number</label>
+            <input class="inp mono ${S.ewbErr && !e.vehicle ? 'err':''}" data-k="ewv" data-i="ewb.vehicle" value="${esc(e.vehicle)}" placeholder="KA01AB1234">
+            ${S.ewbErr && !e.vehicle ? '<div class="hint err">A vehicle number is required for road transport.</div>' : ''}</div>
+          <div class="field"><label>Distance (km)</label>
+            <input class="inp mono ${S.ewbErr && !e.distance ? 'err':''}" data-k="ewd" data-i="ewb.distance" value="${esc(e.distance)}" placeholder="340" inputmode="numeric">
+            ${S.ewbErr && !e.distance ? '<div class="hint err">Distance decides how long the bill stays valid.</div>' : ''}</div>
+        </div>
+        <div style="background:var(--bluebg);border-radius:11px;padding:12px 14px;font-size:12.5px;color:var(--navy-d);line-height:1.55">
+          One day of validity per 200 km, counted from generation. Extend it before it lapses if the goods are still moving.</div>
+      </div>`,
+      `<div class="md-foot"><div class="spacer"></div>
+        <button class="btn btn-o" data-a="closeModal">Cancel</button>
+        <button class="btn btn-g" data-a="genEwb" ${S.ewbBusy?'disabled':''}>${S.ewbBusy?'Generating…':'Generate e-way bill'}</button></div>`, 'md');
+  }
+  if (m.kind === 'recover'){
+    const inv = findInv(m.no), c = inv && cust(inv.customerId);
+    return mShell('Fix and retry', inv ? inv.no.split('/').pop() + ' · ' + inv.customerName : '',
+      `<div class="md-body" data-scroll="modal:${S.modal?S.modal.kind:''}">
+        <div style="display:flex;gap:12px;background:#fffafa;border:1px solid #f0c9c4;border-radius:11px;padding:13px;margin-bottom:16px">
+          <div class="qico" style="background:var(--redbg);color:var(--red)">${ic('warn',17)}</div>
+          <div><div style="font-weight:700;margin-bottom:2px">What the IRP said</div>
+            <div style="font-size:13px;color:var(--muted);line-height:1.5">${esc(inv && inv.eiError || 'The recipient GSTIN could not be validated.')}</div></div></div>
+        <div class="field"><label>Corrected GSTIN for ${esc(inv?inv.customerName:'')}</label>
+          <input class="inp mono" data-k="rgs" data-i="recover.gstin" value="${esc(S.recover.gstin)}" placeholder="${c && c.gstin ? c.gstin : '29ABCDE1234F1Z5'}" maxlength="15">
+          <div class="hint">15 characters: 2-digit state code, PAN, entity number, Z, checksum.</div></div>
+        <div style="font-size:12.5px;color:var(--muted);line-height:1.55">
+          The corrected GSTIN is saved to the customer as well, so the next invoice goes through first time.</div>
+      </div>`,
+      `<div class="md-foot"><div class="spacer"></div>
+        <button class="btn btn-o" data-a="closeModal">Cancel</button>
+        <button class="btn btn-p" data-a="retryEinv" ${S.recover.busy?'disabled':''}>${S.recover.busy?'Retrying…':'Retry e-invoice'}</button></div>`, 'sm');
+  }
+  if (m.kind === 'share'){
+    const opts = [['WhatsApp','Send to the customer’s number','wa','#25923f'],
+      ['Email','Attach the PDF and send','send','#1c5fa8'],
+      ['Download PDF','With the signed QR, if generated','dl','#344054'],
+      ['Copy link','A view-only link that never expires','plug','#344054']];
+    return mShell('Share', m.no,
+      `<div class="md-body" data-scroll="modal:${S.modal?S.modal.kind:''}" style="padding:12px"><div style="display:grid;gap:8px">
+        ${opts.map(([l,s,i,c]) => `<button class="pickrow" style="border:1px solid var(--line);border-radius:11px" data-a="shareDone" data-v="${esc(l)}">
+          <span class="qico" style="background:var(--line2);color:${c}">${ic(i,17)}</span>
+          <span style="flex:1"><span class="nm">${l}</span><span class="sb">${s}</span></span>
+          <span style="color:var(--muted2)">${ic('chev',15)}</span></button>`).join('')}</div></div>`, '', 'sm');
+  }
+  if (m.kind === 'pay'){
+    const inv = findInv(m.no);
+    return mShell('Record payment', inv ? fmt(inv.total) + ' outstanding · ' + inv.customerName : '',
+      `<div class="md-body" data-scroll="modal:${S.modal?S.modal.kind:''}" style="padding:12px"><div style="display:grid;gap:8px">
+        <button class="pickrow" style="border:1px solid var(--line);border-radius:11px;background:var(--greenbg)" data-a="payFull" data-v="${m.no}">
+          <span class="qico" style="background:#fff;color:var(--green)">${ic('check',17)}</span>
+          <span style="flex:1"><span class="nm">Paid in full</span><span class="sb">${inv?fmt(inv.total):''}</span></span></button>
+        <button class="pickrow" style="border:1px solid var(--line);border-radius:11px" data-a="payPartial" data-v="${m.no}">
+          <span class="qico" style="background:var(--bluebg);color:var(--navy)">${ic('chart',17)}</span>
+          <span style="flex:1"><span class="nm">Part payment received</span><span class="sb">Balance stays outstanding</span></span></button>
+        <button class="pickrow" style="border:1px solid var(--line);border-radius:11px" data-a="remindWa" data-v="${m.no}">
+          <span class="qico" style="background:#eafaf1;color:#25923f">${ic('wa',17)}</span>
+          <span style="flex:1"><span class="nm">Send a reminder instead</span><span class="sb">On WhatsApp, with the payment link</span></span></button>
+      </div></div>`, '', 'sm');
+  }
+  if (m.kind === 'cancel' || m.kind === 'eicancel' || m.kind === 'ewbcancel'){
+    const cfg = {
+      cancel:['Cancel invoice','This reverses the sale. The number stays used and shows as cancelled in your register.',
+        ['Customer request','Wrong details','Duplicate invoice','Goods returned'],'cancelInv'],
+      eicancel:['Cancel the IRN','The IRP allows cancellation within 24 hours of generation. After that, raise a credit note.',
+        ['Data entry mistake','Duplicate','Order cancelled','Other'],'cancelEi'],
+      ewbcancel:['Cancel the e-way bill','Only possible while the goods have not moved.',
+        ['Duplicate','Order cancelled','Data entry mistake'],'cancelEwb'],
+    }[m.kind];
+    return mShell(cfg[0], cfg[1],
+      `<div class="md-body" data-scroll="modal:${S.modal?S.modal.kind:''}" style="padding:12px"><div style="display:grid;gap:8px">
+        ${cfg[2].map(r => `<button class="pickrow" style="border:1px solid #f3c9c4;border-radius:11px;color:var(--red);font-weight:700"
+          data-a="${cfg[3]}" data-v="${m.no}" data-r="${esc(r)}">${r}</button>`).join('')}</div></div>`,
+      `<div class="md-foot"><div class="spacer"></div><button class="btn btn-o" data-a="closeModal">Keep it</button></div>`, 'sm');
+  }
+  if (m.kind === 'custActions'){
+    const c = customers.find(x => x.id === m.id);
+    if (!c) return '';
+    const av = avatar(c.name);
+    const inv = invoices.filter(i => i.customerId === c.id);
+    return mShell(c.name, (c.gstin || 'B2C') + ' · ' + c.state,
+      `<div class="md-body" data-scroll="modal:${S.modal?S.modal.kind:''}" style="padding:12px">
+        <div style="display:flex;gap:12px;padding:0 8px 14px">
+          <span class="av" style="width:44px;height:44px;border-radius:13px;background:${av[0]};color:${av[1]};font-size:17px">${c.name[0]}</span>
+          <div style="flex:1;font-size:13px;color:var(--ink2);line-height:1.6">
+            <span class="mono">${esc(c.phone)}</span><br>
+            ${inv.length} invoice${inv.length===1?'':'s'} · ${fmt0(inv.reduce((a,i)=>a+i.total,0))} billed</div></div>
+        <div style="display:grid;gap:8px">
+          <button class="pickrow" style="border:1px solid var(--line);border-radius:11px;background:var(--bluebg)" data-a="billCust" data-v="${c.id}">
+            <span class="qico" style="background:#fff;color:var(--navy)">${ic('doc',17)}</span>
+            <span style="flex:1"><span class="nm">New invoice</span><span class="sb">Opens the composer with them selected</span></span></button>
+          <button class="pickrow" style="border:1px solid var(--line);border-radius:11px" data-a="lixiCust" data-v="${c.id}">
+            <span class="qico" style="background:#e7f5ef;color:var(--green)">${ic('spark',17)}</span>
+            <span style="flex:1"><span class="nm">Dictate to Lixi</span><span class="sb">Say the items and confirm the draft</span></span></button>
+          <button class="pickrow" style="border:1px solid var(--line);border-radius:11px" data-a="soon">
+            <span class="qico" style="background:#eafaf1;color:#25923f">${ic('wa',17)}</span>
+            <span style="flex:1"><span class="nm">Message on WhatsApp</span><span class="sb">${esc(c.phone)}</span></span></button>
+        </div></div>`, '', 'sm');
+  }
+  if (m.kind === 'draftadd'){
+    return mShell('Add to the draft', 'Tap an item to put it on this invoice',
+      `<div class="md-body" data-scroll="modal:${S.modal?S.modal.kind:''}" style="padding:12px"><div class="catgrid" style="grid-template-columns:1fr 1fr">
+        ${items.map(it => `<button class="catbtn" data-a="draftAdd" data-v="${it.id}" data-m="${m.msgId}">
+          <div class="n">${esc(it.name)}</div><div class="m">${fmt(it.rate)} · ${it.gst}%</div></button>`).join('')}
+      </div></div>`, '', 'sm');
+  }
+  return '';
+}
+
+/* ---------- Lixi panel ---------- */
+function lixiPanel(){
+  bootChat();
+  return `<aside class="lixi" aria-label="Lixi assistant">
+    <div class="lx-head">
+      <div class="lx-orb" style="color:#bff2d8">${ic('spark',18)}</div>
+      <div style="flex:1;min-width:0"><div class="lx-name">Lixi</div>
+        <div class="lx-stat"><i></i>${S.listening ? 'Listening…' : 'Ready — say who and what'}</div></div>
+      <button class="iconbtn" style="color:#cfe3f5" data-a="toggleLixi" aria-label="Hide Lixi">${ic('x',17)}</button>
+    </div>
+    <div class="lx-body" id="lx-body">
+      ${S.chat.map(msgView).join('')}
+      ${S.chat.length <= 1 ? `<div class="sugg">
+        ${['Invoice Kumar Enterprises: 8 wheat flour, 6 tea powder',
+           'Bill Anand Retail 20 basmati rice and 10 sunflower oil']
+          .map(t => `<button data-a="fill" data-v="${esc(t)}">${esc(t)}</button>`).join('')}</div>` : ''}
+    </div>
+    <div class="lx-foot">
+      <div class="lx-inputrow">
+        <textarea class="lx-ta" id="lx-input" data-k="lxi" data-i="chatInput" rows="1"
+          placeholder="Invoice Meena Distributors: 30 rice bags…" aria-label="Message Lixi">${esc(S.chatInput)}</textarea>
+        <button class="lx-send mic ${S.listening?'live':''}" data-a="${S.listening?'stopVoice':'startVoice'}"
+          aria-label="${S.listening?'Stop listening':'Speak'}">${ic('mic',17)}</button>
+        <button class="lx-send" data-a="sendChat" aria-label="Send">${ic('send',17)}</button>
+      </div>
+      <div style="font-size:11px;color:var(--muted2);margin-top:7px;text-align:center">
+        Drafts are yours to check. Nothing is filed until you confirm.</div>
+    </div>
+  </aside>`;
+}
+function msgView(m){
+  const A = ` data-anim="m${m.id}"`;
+  if (m.kind === 'user')   return `<div class="bub user"${A}>${esc(m.text)}</div>`;
+  if (m.kind === 'text')   return `<div class="bub bot"${A}>${esc(m.text)}</div>`;
+  if (m.kind === 'typing') return `<div class="typing"><i></i><i></i><i></i></div>`;
+  if (m.kind === 'chips')  return `<div class="sugg">${m.chips.map(c =>
+    `<button data-a="chooseCust" data-v="${c.cid}">${esc(c.label)}</button>`).join('')}</div>`;
+  if (m.kind === 'issued') return `<div class="okcard"${A}>
+    <div style="display:flex;align-items:center;gap:9px;margin-bottom:5px">
+      <span style="width:22px;height:22px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center">${ic('check',13)}</span>
+      <span style="font-weight:800;font-size:13.5px;color:#0a5c3f">Invoice issued</span></div>
+    <div class="mono" style="font-size:12px;color:#0a5c3f;font-weight:600">${m.no.split('/').pop()}</div>
+    <div style="font-size:12.5px;color:#12704f;margin-top:3px">${m.total} · saved to ${esc(m.who)}</div></div>`;
+  if (m.kind === 'actions') return `<div class="sugg">
+    <button data-a="genEinvChat" data-v="${m.no}" style="background:var(--navy);color:#fff;border-color:var(--navy)">Generate e-invoice</button>
+    <button data-a="openInv" data-v="${m.no}">Open invoice</button>
+    <button data-a="openShare" data-v="${m.no}">Share</button></div>`;
+  if (m.kind === 'einv') return `<div class="qrbox">
+    <img src="${m.qr}" alt="Signed QR code">
+    <div style="min-width:0"><div class="pl">IRN</div><div class="irn">${m.irn.slice(0,44)}…</div>
+      <div style="display:flex;gap:14px;margin-top:6px">
+        <div><div class="pl">Ack</div><div class="mono" style="font-size:11.5px;font-weight:600">${m.ackNo}</div></div>
+        <div><div class="pl">Date</div><div style="font-size:11.5px;font-weight:600">${m.ackDate}</div></div></div></div></div>`;
+  if (m.kind === 'draft'){
+    const d = m.draft, locked = !!d.locked;
+    return `<div class="dcard"${A}>
+      <div class="dcard-h">
+        <div style="flex:1;min-width:0"><div style="font-weight:800;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(d.customerName)}</div>
+          <div style="font-size:11px;color:var(--muted2)">${locked ? 'Issued' : 'Draft — check before issuing'}</div></div>
+        <span class="pill" style="background:${d.inter?'#f0eafb':'#eef4fb'};color:${d.inter?'#7a3fd0':'#1c5fa8'}">${d.inter?'IGST':'CGST+SGST'}</span>
+      </div>
+      ${d.lines.map(l => `<div class="dline">
+        <div class="nm"><div class="n1">${esc(l.name)}</div><div class="n2">${fmt(l.rate)} · ${l.gst}%</div></div>
+        ${locked ? `<span class="num" style="font-size:12px;color:var(--muted)">${l.qty} ${l.unit}</span>`
+          : `<span class="qty"><button data-a="draftDec" data-v="${l.itemId}" data-m="${m.id}" aria-label="Reduce">−</button>
+             <span class="v">${l.qty}</span>
+             <button data-a="draftInc" data-v="${l.itemId}" data-m="${m.id}" aria-label="Increase">+</button></span>`}
+        <span class="money" style="font-size:12.5px;min-width:74px;text-align:right">${fmt(l.taxable)}</span>
+        ${!locked && d.lines.length > 1 ? `<button class="iconbtn" style="width:22px;height:22px" data-a="draftRm" data-v="${l.itemId}" data-m="${m.id}" aria-label="Remove">${ic('x',13)}</button>` : ''}
+      </div>`).join('')}
+      <div class="dtot">
+        <div class="r1"><span>Taxable value</span><span class="money" style="font-size:12px">${fmt(d.sub)}</span></div>
+        ${d.inter ? `<div class="r1"><span>IGST</span><span class="money" style="font-size:12px">${fmt(d.igst)}</span></div>`
+          : `<div class="r1"><span>CGST</span><span class="money" style="font-size:12px">${fmt(d.cgst)}</span></div>
+             <div class="r1"><span>SGST</span><span class="money" style="font-size:12px">${fmt(d.sgst)}</span></div>`}
+        ${d.round ? `<div class="r1"><span>Rounding</span><span class="money" style="font-size:12px">${fmt(d.round)}</span></div>` : ''}
+        <div class="r1 g"><span>Total</span><span class="money">${fmt(d.total)}</span></div>
+      </div>
+      ${locked ? '' : `<div class="dacts">
+        <button class="btn btn-sm btn-o" data-a="draftAddOpen" data-m="${m.id}">${ic('plus',14)} Add item</button>
+        <div class="spacer"></div>
+        <button class="btn btn-sm btn-g" data-a="confirmDraft" data-m="${m.id}">Issue invoice</button></div>`}
+    </div>`;
+  }
+  return '';
+}
+
+/* ---------- command palette ---------- */
+function palCommands(){
+  const cmds = [];
+  NAV.forEach(g => g.items.forEach(([r,l]) => cmds.push({ sec:'Go to', n:l, s:g.grp, a:'go', v:r })));
+  cmds.push({ sec:'Create', n:'New invoice', s:'Issue a tax invoice', a:'newInvoice' });
+  cmds.push({ sec:'Create', n:'New quotation', s:'Quote before you bill', a:'newQuote' });
+  cmds.push({ sec:'Create', n:'Record a return', s:'Raise a credit note', a:'newReturn' });
+  cmds.push({ sec:'Create', n:'Add customer', s:'With GSTIN and state', a:'addCustomer' });
+  cmds.push({ sec:'Create', n:'Add item', s:'With HSN and GST rate', a:'addItem' });
+  cmds.push({ sec:'Create', n:'Ask Lixi', s:'Dictate an invoice', a:'focusLixi' });
+  cmds.push({ sec:'Account', n:'Sign out', s:'End this session', a:'logout' });
+  invoices.slice(0,14).forEach(i => cmds.push({ sec:'Invoices', n:i.no.split('/').pop() + ' · ' + i.customerName,
+    s: fmt(i.total) + ' · ' + PAY[i.payStatus][0], a:'openInv', v:i.no }));
+  customers.forEach(c => cmds.push({ sec:'Customers', n:c.name, s:c.gstin || 'B2C · ' + c.phone, a:'custActions', v:c.id }));
+  return cmds;
+}
+function palFiltered(){
+  const q = S.palQ.toLowerCase().trim();
+  const all = palCommands();
+  if (!q) return all.filter(c => c.sec === 'Go to' || c.sec === 'Create');
+  return all.filter(c => (c.n + ' ' + c.s).toLowerCase().includes(q)).slice(0, 20);
+}
+function palette(){
+  const list = palFiltered();
+  let last = '';
+  return `<div class="palette" data-anim="palette" role="dialog" aria-label="Command palette">
+    <div class="pal-in">${ic('search',18)}
+      <input data-k="pal" data-i="palQ" value="${esc(S.palQ)}" placeholder="Search invoices, customers, or jump to a page" aria-label="Search">
+      <span class="kbd">Esc</span></div>
+    <div class="pal-list">${list.length ? list.map((c,i) => {
+      const head = c.sec !== last ? `<div class="pal-sec">${c.sec}</div>` : '';
+      last = c.sec;
+      return head + `<button class="pal-row ${i===S.palIdx?'on':''}" data-a="palRun" data-v="${i}">
+        <span class="n">${esc(c.n)}</span><span class="s">${esc(c.s)}</span>
+        ${i===S.palIdx?'<span class="kbd">↵</span>':''}</button>`;
+    }).join('') : `<div style="padding:26px;text-align:center;color:var(--muted);font-size:13.5px">
+      Nothing matches “${esc(S.palQ)}”</div>`}</div></div>`;
+}
+
+/* ============================================================
+   EVENTS
+   ============================================================ */
+function setPath(path, val){
+  const parts = path.split('.');
+  let o = S;
+  for (let i = 0; i < parts.length - 1; i++) o = o[parts[i]];
+  o[parts[parts.length-1]] = val;
+}
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.dataset && t.dataset.i){
+    let v = t.value;
+    if (t.dataset.i === 'newCust.gstin' || t.dataset.i === 'recover.gstin' || t.dataset.i === 'ewb.vehicle'
+      || t.dataset.i === 'auth.gstin') v = v.toUpperCase();
+    if (t.dataset.i === 'auth.phone') v = v.replace(/\D/g,'').slice(0,10);
+    if (t.dataset.i === 'auth.otp') v = v.replace(/\D/g,'').slice(0,4);
+    if (t.dataset.i.indexOf('auth.') === 0){
+      /* nothing on the sign-in screen is derived from these while typing,
+         so update in place and skip the re-render entirely */
+      setPath(t.dataset.i, v);
+      if (t.value !== v){
+        const caret = Math.max(0, t.selectionStart - (t.value.length - v.length));
+        t.value = v;
+        try { t.setSelectionRange(caret, caret); } catch(e){}
+      }
+      if (S.auth.err){ S.auth.err = ''; const n = document.querySelector('.auth-err'); if (n) n.remove(); }
+      return;
+    }
+    if (t.dataset.i === 'ewb.distance') v = v.replace(/\D/g,'');
+    setPath(t.dataset.i, v);
+    if (t.dataset.i === 'palQ') S.palIdx = 0;
+    if (t.id === 'lx-input'){ t.style.height = 'auto'; t.style.height = Math.min(110, t.scrollHeight) + 'px'; }
+    render();
+  }
+});
+document.addEventListener('keydown', e => {
+  /* signed out: the form owns the keyboard */
+  if (!S.auth.authed){
+    if (e.key === 'Enter'){ e.preventDefault(); authAdvance(); }
+    return;
+  }
+  /* global shortcuts */
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'){
+    e.preventDefault(); S.palette = !S.palette; S.palQ = ''; S.palIdx = 0; render();
+    setTimeout(() => { const n = document.querySelector('[data-k="pal"]'); n && n.focus(); }, 30);
+    return;
+  }
+  if (S.palette){
+    const list = palFiltered();
+    if (e.key === 'Escape'){ e.preventDefault(); S.palette = false; render(); return; }
+    if (e.key === 'ArrowDown'){ e.preventDefault(); S.palIdx = Math.min(list.length-1, S.palIdx+1); render(); return; }
+    if (e.key === 'ArrowUp'){ e.preventDefault(); S.palIdx = Math.max(0, S.palIdx-1); render(); return; }
+    if (e.key === 'Enter'){ e.preventDefault(); runPal(S.palIdx); return; }
+    return;
+  }
+  if (e.key === 'Escape'){
+    if (S.menu){ S.menu = false; render(); return; }
+    if (S.modal) return closeModal();
+    if (S.drawer) return closeDrawer();
+  }
+  if (e.target.id === 'lx-input' && e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendChat(); return; }
+  const typing = /^(INPUT|TEXTAREA)$/.test(e.target.tagName);
+  if (typing || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.key === 'n'){ e.preventDefault(); act('newInvoice'); }
+  else if (e.key === 'l'){ e.preventDefault(); act('focusLixi'); }
+  else if (e.key === '/'){ e.preventDefault(); S.palette = true; S.palQ = ''; S.palIdx = 0; render();
+    setTimeout(() => { const n = document.querySelector('[data-k="pal"]'); n && n.focus(); }, 30); }
+});
+function runPal(i){
+  const c = palFiltered()[i];
+  if (!c) return;
+  S.palette = false; S.palQ = '';
+  act(c.a, c.v);
+}
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-a]');
+  if (!el){ if (S.menu){ S.menu = false; render(); } return; }
+  if (S.menu && el.dataset.a !== 'toggleMenu') S.menu = false;
+  const d = el.dataset;
+  act(d.a, d.v, d);
+});
+
+function act(a, v, d){
+  d = d || {};
+  switch (a){
+    /* account */
+    case 'sendOtp': sendOtp(); break;
+    case 'verifyOtp': verifyOtp(); break;
+    case 'resendOtp': S.auth.otp = ''; render(); toast('Code sent again'); focusAuth('otp'); break;
+    case 'authBack': S.auth.step = 1; S.auth.otp = ''; S.auth.err = ''; render(); focusAuth('aphone'); break;
+    case 'gstinNext': S.auth.fetched ? (S.auth.step = 4, render()) : fetchGstin(); break;
+    case 'skipAuth': skipAuth(); break;
+    case 'finishAuth': finishAuth(); break;
+    case 'toggleMenu': S.menu = !S.menu; render(); break;
+    case 'logout': logout(); break;
+
+    /* navigation */
+    case 'go': go(v); break;
+    case 'toggleRail': S.rail = !S.rail; render(); break;
+    case 'toggleLixi': S.lixi = !S.lixi; render();
+      if (S.lixi) setTimeout(() => { const n = document.getElementById('lx-input'); n && n.focus(); }, 240);
+      break;
+    case 'openPalette': S.palette = true; S.palQ = ''; S.palIdx = 0; render();
+      setTimeout(() => { const n = document.querySelector('[data-k="pal"]'); n && n.focus(); }, 30); break;
+    case 'closePalette': S.palette = false; render(); break;
+    case 'palRun': runPal(parseInt(v)); break;
+    case 'closeDrawer': closeDrawer(); break;
+    case 'closeModal': closeModal(); break;
+
+    /* create */
+    case 'newInvoice': S.form = { customerId:null, lines:[], q:'' }; openModal({ kind:'newInvoice' }); break;
+    case 'newQuote': S.qForm = { customerId:null, lines:[], q:'' }; openModal({ kind:'newQuote' }); break;
+    case 'newReturn': S.ret = { invNo:null, lines:{}, reason:'' }; openModal({ kind:'newReturn' }); break;
+    case 'addCustomer': openModal({ kind:'addCustomer' }); break;
+    case 'addItem': openModal({ kind:'addItem' }); break;
+
+    /* open documents */
+    case 'openInv': closeModal(); openDoc('invoice', v); break;
+    case 'openQuote': openDoc('quote', v); break;
+    case 'openCnote': openDoc('cnote', v); break;
+    case 'custActions': openModal({ kind:'custActions', id:v }); break;
+    case 'quickBill': S.form = { customerId:null, lines:[{ itemId:v, qty:1 }], q:'' }; openModal({ kind:'newInvoice' }); break;
+    case 'billCust': S.form = { customerId:v, lines:[], q:'' }; openModal({ kind:'newInvoice' }); break;
+    case 'lixiCust': closeModal(); S.lixi = true; bootChat();
+      S.chatInput = 'Invoice ' + cust(v).name + ': '; render();
+      setTimeout(() => { const n = document.getElementById('lx-input'); if (n){ n.focus(); n.setSelectionRange(n.value.length, n.value.length); } }, 240);
+      break;
+
+    /* invoice list */
+    case 'invFilter': S.invFilter = v; S.selected = new Set(); render(); break;
+    case 'sort':
+      if (S.sort.key === v) S.sort.dir = S.sort.dir === 'asc' ? 'desc' : 'asc';
+      else S.sort = { key:v, dir:'desc' };
+      render(); break;
+    case 'selOne': S.selected.has(v) ? S.selected.delete(v) : S.selected.add(v); render(); break;
+    case 'selNone': S.selected = new Set(); render(); break;
+    case 'selAll': {
+      const q = S.invQ.toLowerCase();
+      const F = { all:()=>true, unpaid:i=>i.payStatus==='unpaid'||i.payStatus==='partial',
+        overdue:i=>i.payStatus==='overdue', einv:i=>i.eiStatus==='PENDING'||i.eiStatus==='ACTION_REQUIRED',
+        ewb:i=>i.ewbStatus==='RECOMMENDED' };
+      let list = invoices.filter(F[S.invFilter] || F.all);
+      if (q) list = list.filter(i => i.customerName.toLowerCase().includes(q) || i.no.toLowerCase().includes(q));
+      S.selected = S.selected.size === list.length ? new Set() : new Set(list.map(i => i.no));
+      render(); break; }
+    case 'bulkEinv': bulkEinvoice(); render(); break;
+
+    /* compliance */
+    case 'genEinv': genEinvoice(v); render(); break;
+    case 'fileAllEinv': {
+      const p = eiPending().filter(i => i.eiStatus === 'PENDING');
+      p.forEach(i => genEinvoice(i.no, true));
+      toast(p.length + ' e-invoice' + (p.length===1?'':'s') + ' filed'); break; }
+    case 'openRecover': closeDrawer(); S.recover = { gstin:'', busy:false, done:false }; openModal({ kind:'recover', no:v }); break;
+    case 'retryEinv': retryEinvoice(); break;
+    case 'openEwb': closeDrawer(); S.ewb = { transporter:'', vehicle:'', distance:'', mode:'Road' }; S.ewbErr = false; openModal({ kind:'ewb', no:v }); break;
+    case 'ewbMode': S.ewb.mode = v; render(); break;
+    case 'genEwb': generateEwb(); break;
+    case 'extendEwb': extendEwb(v); render(); break;
+
+    /* composer */
+    case 'pickCust': {
+      const f = d.kind === 'quote' ? S.qForm : S.form;
+      f.customerId = v; render(); break; }
+    case 'addLine': {
+      const f = d.kind === 'quote' ? S.qForm : S.form;
+      const ex = f.lines.find(l => l.itemId === v);
+      if (ex) ex.qty++; else f.lines.push({ itemId:v, qty:1 });
+      render(); break; }
+    case 'incLine': {
+      const f = d.kind === 'quote' ? S.qForm : S.form;
+      f.lines = f.lines.map(l => l.itemId === v ? { itemId:v, qty:l.qty + parseInt(d.d) } : l).filter(l => l.qty > 0);
+      render(); break; }
+    case 'rmLine': {
+      const f = d.kind === 'quote' ? S.qForm : S.form;
+      f.lines = f.lines.filter(l => l.itemId !== v); render(); break; }
+    case 'issueInvoice': {
+      const f = S.form;
+      if (!f.customerId || !f.lines.length) return toast('Pick a customer and add at least one item');
+      const inv = issue(build(f.customerId, f.lines));
+      S.form = { customerId:null, lines:[], q:'' };
+      closeModal(); go('invoices'); openDoc('invoice', inv.no);
+      toast('Invoice ' + inv.no.split('/').pop() + ' issued'); break; }
+    case 'createQuote': createQuote(); break;
+    case 'convertQuote': convertQuote(v); break;
+
+    /* returns */
+    case 'pickRetInv': {
+      S.ret.invNo = v; S.ret.lines = {};
+      findInv(v).lines.forEach((l,i) => S.ret.lines[i] = 0);
+      render(); break; }
+    case 'incRet': {
+      const inv = findInv(S.ret.invNo); if (!inv) break;
+      const i = parseInt(v), max = inv.lines[i].qty;
+      S.ret.lines[i] = Math.max(0, Math.min(max, (S.ret.lines[i]||0) + parseInt(d.d)));
+      render(); break; }
+    case 'issueCn': issueCreditNote(); break;
+
+    /* masters */
+    case 'acState': S.newCust.stateCode = parseInt(v); render(); break;
+    case 'saveCustomer': saveCustomer(); break;
+    case 'aiGst': S.newItem.gst = parseInt(v); render(); break;
+    case 'aiUnit': S.newItem.unit = v; render(); break;
+    case 'saveItem': saveItem(); break;
+
+    /* share / payment / cancel */
+    case 'openShare': openModal({ kind:'share', no:v }); break;
+    case 'shareDone': closeModal();
+      toast(v === 'Copy link' ? 'Link copied' : v === 'Download PDF' ? 'PDF downloaded' : 'Sent on ' + v); break;
+    case 'openPay': openModal({ kind:'pay', no:v }); break;
+    case 'payFull': markPaid(v); render(); break;
+    case 'payPartial': markPartial(v); render(); break;
+    case 'remindWa': closeModal(); toast('Reminder sent on WhatsApp'); break;
+    case 'remind': toast('Reminder sent on WhatsApp'); break;
+    case 'openCancel': openModal({ kind:'cancel', no:v }); break;
+    case 'cancelInv': cancelInvoice(v, d.r); closeDrawer(); render(); break;
+    case 'openEiCancel': openModal({ kind:'eicancel', no:v }); break;
+    case 'cancelEi': cancelEinvoice(v); render(); break;
+    case 'openEwbCancel': openModal({ kind:'ewbcancel', no:v }); break;
+    case 'cancelEwb': cancelEwb(v); render(); break;
+
+    /* Lixi */
+    case 'sendChat': sendChat(); break;
+    case 'startVoice': startVoice(); break;
+    case 'stopVoice': stopVoice(); break;
+    case 'fill': S.chatInput = v; render(); setTimeout(sendChat, 60); break;
+    case 'chooseCust': chooseCustomer(v); break;
+    case 'draftInc': draftInc(parseInt(d.m), v, 1); break;
+    case 'draftDec': draftInc(parseInt(d.m), v, -1); break;
+    case 'draftRm': draftRemove(parseInt(d.m), v); break;
+    case 'draftAddOpen': openModal({ kind:'draftadd', msgId:parseInt(d.m) }); break;
+    case 'draftAdd': draftAdd(parseInt(d.m), v); break;
+    case 'confirmDraft': confirmDraft(parseInt(d.m)); break;
+    case 'genEinvChat': genEinvChat(v); break;
+    case 'focusLixi': S.lixi = true; bootChat(); render();
+      setTimeout(() => { const n = document.getElementById('lx-input'); n && n.focus(); }, 240); break;
+
+    /* misc */
+    case 'toggleInt': S.integrations[v] = !S.integrations[v]; render();
+      toast(v + (S.integrations[v] ? ' connected' : ' turned off')); break;
+    case 'export': toast('Exported'); break;
+    case 'waSupport': toast('Opening WhatsApp support'); break;
+    case 'soon': toast('Not in this demo'); break;
+  }
+}
+
+/* ---------- boot ---------- */
+render();
+focusAuth('aphone');
+</script>
+</body>
+</html>
