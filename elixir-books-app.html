@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elixir Books Smart - GST Compliance & Invoicing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Purple SaaS - Default */
+            --primary: #6D28D9;
+            --primary-hover: #5B21B6;
+            --secondary: #8B5CF6;
+            --accent: #EC4899;
+            --success: #16A34A;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --background: #FAFAFF;
+            --surface: #FFFFFF;
+            --border: #ECEBFF;
+            --text-primary: #1F2937;
+            --text-secondary: #6B7280;
+        }
+
+        body.dark-olive {
+            --primary: #5B5F3A;
+            --primary-hover: #464A2D;
+            --secondary: #7A8450;
+            --accent: #C47A3A;
+            --success: #2F855A;
+            --warning: #DD6B20;
+            --danger: #C53030;
+            --background: #FAF9F6;
+            --surface: #FFFFFF;
+            --border: #E8E5DD;
+            --text-primary: #2D3748;
+            --text-secondary: #718096;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .theme-switcher {
+            background: var(--border);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .theme-switcher:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Main Container */
+        .container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 2rem 1rem;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-section-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .nav-item:hover {
+            background: var(--background);
+            color: var(--primary);
+        }
+
+        .nav-item.active {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            font-size: 1.25rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Content Area */
+        .content {
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-meta {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: rgba(22, 163, 74, 0.1);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .badge-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        /* Table */
+        .table-container {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--background);
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        tr:hover {
+            background: var(--background);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            box-shadow: 0 4px 12px rgba(109, 40, 217, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--border);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .action-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon">📚</div>
+            <span>Elixir Books Smart</span>
+        </div>
+        <div class="header-actions">
+            <button class="theme-switcher" onclick="toggleTheme()">
+                <span id="theme-label">Dark Olive</span>
+            </button>
+            <div class="user-avatar" title="User Profile">GM</div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="nav-section">
+                <div class="nav-section-title">Dashboard</div>
+                <a class="nav-item active" href="#dashboard">
+                    <span class="nav-icon">📊</span>
+                    <span>Overview</span>
+                </a>
+                <a class="nav-item" href="#invoices">
+                    <span class="nav-icon">📄</span>
+                    <span>Invoices</span>
+                </a>
+                <a class="nav-item" href="#bills">
+                    <span class="nav-icon">💳</span>
+                    <span>Bills</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Compliance</div>
+                <a class="nav-item" href="#gst-return">
+                    <span class="nav-icon">✅</span>
+                    <span>GST Returns</span>
+                </a>
+                <a class="nav-item" href="#e-way-bill">
+                    <span class="nav-icon">🚚</span>
+                    <span>E-way Bills</span>
+                </a>
+                <a class="nav-item" href="#irn">
+                    <span class="nav-icon">📮</span>
+                    <span>IRN/IRP</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Reports</div>
+                <a class="nav-item" href="#ledger">
+                    <span class="nav-icon">📖</span>
+                    <span>Ledger</span>
+                </a>
+                <a class="nav-item" href="#tax-analysis">
+                    <span class="nav-icon">📈</span>
+                    <span>Tax Analysis</span>
+                </a>
+                <a class="nav-item" href="#audit">
+                    <span class="nav-icon">🔍</span>
+                    <span>Audit Trail</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Settings</div>
+                <a class="nav-item" href="#company">
+                    <span class="nav-icon">🏢</span>
+                    <span>Company</span>
+                </a>
+                <a class="nav-item" href="#users">
+                    <span class="nav-icon">👥</span>
+                    <span>Users</span>
+                </a>
+                <a class="nav-item" href="#integrations">
+                    <span class="nav-icon">🔗</span>
+                    <span>Integrations</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">Dashboard</h1>
+                <p class="page-subtitle">Welcome back, GM. Here's your GST compliance overview.</p>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="section">
+                <h2 class="section-title">📊 Quick Stats (Current Month)</h2>
+                <div class="stats-row">
+                    <div class="stat-box">
+                        <div class="stat-value">₹4.2M</div>
+                        <div class="stat-label">Total Sales</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">156</div>
+                        <div class="stat-label">Invoices Created</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">₹63.8K</div>
+                        <div class="stat-label">GST Collected</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">₹28.4K</div>
+                        <div class="stat-label">GST Paid</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Metrics Cards -->
+            <div class="section">
+                <h2 class="section-title">🎯 Key Metrics</h2>
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Invoicing Pipeline</div>
+                                <div class="card-meta">Active & Due</div>
+                            </div>
+                            <div class="card-icon">📄</div>
+                        </div>
+                        <div class="card-value">47</div>
+                        <div>
+                            <span class="badge badge-warning">18 Overdue</span>
+                            <span class="badge badge-success" style="margin-left: 0.5rem;">29 Current</span>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">GST Compliance</div>
+                                <div class="card-meta">Filing Status</div>
+                            </div>
+                            <div class="card-icon">✅</div>
+                        </div>
+                        <div class="card-value">5/6</div>
+                        <div>
+                            <span class="badge badge-success">On Track</span>
+                            <span class="badge badge-warning" style="margin-left: 0.5rem;">1 Due Soon</span>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">E-way Bill Queue</div>
+                                <div class="card-meta">Pending Generation</div>
+                            </div>
+                            <div class="card-icon">🚚</div>
+                        </div>
+                        <div class="card-value">12</div>
+                        <div>
+                            <span class="badge badge-danger">Urgent</span>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">IRN/IRP Status</div>
+                                <div class="card-meta">Digital Signature</div>
+                            </div>
+                            <div class="card-icon">📮</div>
+                        </div>
+                        <div class="card-value">2,847</div>
+                        <div>
+                            <span class="badge badge-success">Generated</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Invoices -->
+            <div class="section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 class="section-title" style="margin-bottom: 0;">📋 Recent Invoices</h2>
+                    <button class="btn btn-primary">
+                        ➕ New Invoice
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Invoice #</th>
+                                <th>Customer</th>
+                                <th>Amount</th>
+                                <th>GST</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>INV-2024-001</strong></td>
+                                <td>Acme Corp</td>
+                                <td>₹85,000</td>
+                                <td>₹15,300</td>
+                                <td><span class="badge badge-success">Paid</span></td>
+                                <td>Aug 1, 2024</td>
+                            </tr>
+                            <tr>
+                                <td><strong>INV-2024-002</strong></td>
+                                <td>TechStart Ltd</td>
+                                <td>₹1,20,000</td>
+                                <td>₹21,600</td>
+                                <td><span class="badge badge-warning">Pending</span></td>
+                                <td>Jul 30, 2024</td>
+                            </tr>
+                            <tr>
+                                <td><strong>INV-2024-003</strong></td>
+                                <td>Global Supplies</td>
+                                <td>₹2,50,000</td>
+                                <td>₹45,000</td>
+                                <td><span class="badge badge-success">Paid</span></td>
+                                <td>Jul 28, 2024</td>
+                            </tr>
+                            <tr>
+                                <td><strong>INV-2024-004</strong></td>
+                                <td>Digital Solutions</td>
+                                <td>₹95,500</td>
+                                <td>₹17,190</td>
+                                <td><span class="badge badge-danger">Overdue</span></td>
+                                <td>Jul 15, 2024</td>
+                            </tr>
+                            <tr>
+                                <td><strong>INV-2024-005</strong></td>
+                                <td>Smart Industries</td>
+                                <td>₹3,40,000</td>
+                                <td>₹61,200</td>
+                                <td><span class="badge badge-success">Paid</span></td>
+                                <td>Jul 10, 2024</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTheme = 'purple-saas';
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeLabel = document.getElementById('theme-label');
+
+            if (currentTheme === 'purple-saas') {
+                body.classList.add('dark-olive');
+                themeLabel.textContent = 'Purple SaaS';
+                currentTheme = 'dark-olive';
+            } else {
+                body.classList.remove('dark-olive');
+                themeLabel.textContent = 'Dark Olive';
+                currentTheme = 'purple-saas';
+            }
+        }
+
+        // Add smooth transitions
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
